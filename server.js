@@ -8,6 +8,9 @@ app.get('/', (req, res) => {
     res.render('main'); // Renders main.ejs
 });
 
+app.get('/newpoll', (req, res) => {
+    res.render('newpoll'); 
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
