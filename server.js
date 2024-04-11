@@ -9,6 +9,10 @@ app.get('/', (req, res) => {
 });
 
 
+app.get('/voting', (req, res) => {
+    res.render('voting');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
