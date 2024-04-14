@@ -70,10 +70,10 @@
 
     <script>
       const form = document.getElementById("vote-form");
-      const candidateId = document.querySelector(
+      form.addEventListener("submit", async (event) => {
+        const candidateId = document.querySelector(
         'input:checked'
       ).value;
-      form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         try {
@@ -88,6 +88,7 @@
           if (response.ok) {
   const message = await response.text();
   showPopup(message);
+  location.reload();
 } else {
   const errorMessage = await response.text();
   showPopup(`Error: ${errorMessage}`);

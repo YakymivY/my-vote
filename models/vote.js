@@ -11,64 +11,29 @@ class Vote {
   }
 
   static fetchAll() {
+    // synchronous code
     const rawData = fs.readFileSync(filePath);
     const votes = JSON.parse(rawData);
 
     return votes;
   }
 
-  static async findByVotingIdAndUserId(votingId, userId) {
-    const rawData = await new Promise((resolve, reject) => {
-      fs.readFile(filePath, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-
-    const votes = JSON.parse(rawData);
+  static findByVotingIdAndUserId(votingId, userId) {
+    const votes = this.fetchAll();
     return votes.find(
       (vote) => vote.votingId == votingId && vote.userId == userId
     );
   }
 
-  async save() {
-    let rawData;
-
-    try {
-      rawData = await new Promise((resolve, reject) => {
-        fs.readFile(filePath, (err, data) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(data);
-          }
-        });
-      });
-    } catch (err) {
-      console.error(err);
-      rawData = "[]";
-    }
-
-    const votes = JSON.parse(rawData);
+  save() {
+    const votes = Vote.fetchAll();
     votes.push(this);
-
-    await new Promise((resolve, reject) => {
-      fs.writeFile(filePath, JSON.stringify(votes), (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    fs.writeFileSync(filePath, JSON.stringify(votes));
   }
 
-  async castVote() {
+  castVote() {
     // Check if the user has already voted
-    const existingVote = await Vote.findByVotingIdAndUserId(
+    const existingVote = Vote.findByVotingIdAndUserId(
       this.votingId,
       this.userId
     );
@@ -78,7 +43,7 @@ class Vote {
     }
 
     const newVote = new Vote(this.votingId, this.candidateId, this.userId);
-    await newVote.save();
+    newVote.save();
   }
 }
 

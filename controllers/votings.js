@@ -4,7 +4,7 @@ const Vote = require("../models/vote");
 exports.getVoting = async (req, res, next) => {
   const votingId = parseInt(req.params.id);
   const authorId = req.cookies.authorId;
-  const vote = await Vote.findByVotingIdAndUserId(
+  const vote = Vote.findByVotingIdAndUserId(
     votingId,
     authorId
   );
@@ -39,46 +39,6 @@ exports.addVoting = async (req, res, next) => {
 };
 
 exports.castVote = async (req, res, next) => {
-  console.log('Received request:', req.method, req.url);
-  console.log('Request body:', req.body);
-
-  const votingId = req.params.id;
-  const candidateId = parseInt(req.body.candidateId);
-  const userId = req.cookies.authorId;
-
-  if (!candidateId) {
-    res.status(500).send({ message: 'Incorrect candidate' });
-  }
-
-  try {
-    const voting = await Voting.findById(votingId);
-
-    if (!voting) {
-      return res.status(404).send('Voting not found');
-    }
-
-    if (voting.status !== 'active') {
-      return res.status(400).send('Voting is not active' );
-    }
-
-    const vote = new Vote(votingId, candidateId, userId);
-    await vote.castVote();
-    Voting.incrementVotes(votingId, candidateId, (err) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Failed to increment votes');
-      }
-      console.log('Votes incremented successfully');
-      res.status(200).send('Vote cast successfully');
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(400).send(error.message);
-  }
-};
-
-
-exports.castVote = async (req, res, next) => {
     console.log('Received request:', req.method, req.url);
     console.log('Request body:', req.body);
   
@@ -93,7 +53,7 @@ exports.castVote = async (req, res, next) => {
     const vote = new Vote(votingId, candidateId, userId);
   
     try {
-        await vote.castVote();
+        vote.castVote();
         Voting.incrementVotes(votingId, candidateId, (err) => {
           if (err) {
             console.error(err);
