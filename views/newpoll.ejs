@@ -22,7 +22,7 @@
         <section class="votings_container">
             <div class="voting_card">
                 <h1>Create a new poll</h1>
-                <form id="surveyForm">
+                <form id="surveyForm" action="/newpoll/add-voting" method="POST">
                     <label for="surveyTitle">Question/label:</label>
                     <input type="text" id="surveyTitle" name="surveyTitle" required>
 
@@ -33,14 +33,14 @@
                         <div class="option">
                             <label>Poll answer:</label>
                             <div class="option-input">
-                                <input type="text" name="option[]" required>
+                                <input type="text" name="options" required>
                                 <button type="button" class="remove-option" onclick="removeOption(this)">✖</button>
                             </div>
                         </div>
                         <div class="option">
                             <label>Poll answer:</label>
                             <div class="option-input">
-                                <input type="text" name="option[]" required>
+                                <input type="text" name="options" required>
                                 <button type="button" class="remove-option" onclick="removeOption(this)">✖</button>
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                 optionDiv.classList.add('option');
                 optionDiv.innerHTML = '<label for="option">Poll answer:</label>' +
                     '<div class="option-input">' +
-                    '<input type="text" name="option[]" required>' +
+                    '<input type="text" name="options" required>' +
                     '<button type="button" class="remove-option" onclick="removeOption(this)">✖</button>' +
                     '</div>';
                 document.getElementById('options').appendChild(optionDiv);
