@@ -42,8 +42,12 @@
                 <p class="option_text">
                   <input type="radio" name="candidateId" id="answer<%= index + 1 %>" value="<%= candidate.id %>" checked/>
                   <label for="answer<%= index + 1 %>"
-                    ><%= candidate.name %> <% if (voting.status === 'closed') { %>
+                    ><%= candidate.name %> 
+                    <% if (voting.status === 'closed' || vote) { %>
                       - <%= candidate.voteCount %> votes
+                    <% } %>
+                    <% if (vote && vote.candidateId === candidate.id) { %>
+                      - Your choice
                     <% } %></label
                   >
                 </p>
@@ -51,12 +55,13 @@
               </div>
               <div class="vote_button_container">
                 <% if (voting.status == 'active') { %>
-                  <button type="submit" class="green_button">Vote</button>
+                  <button type="submit" class="green_button" id="vote-button">Vote</button>
                 <% } %>
               </div>
             </form>
             <% if (voting.createdById == authorId && voting.status == 'active') { %>
               <button id="close-voting-button">Close Voting</button>
+              <a href="/voting/<%= voting.id %>/res"><button id="res-button">Voting Results</button></a>
             <% } %>
           </div>
         </div>
@@ -119,6 +124,13 @@
       alert("Error: Failed to close voting");
     }
   });
+
+  if(`<%= voting.status %>` !== 'active' || `<%= vote %>`){
+    document.getElementById("vote-button").disabled = true;
+    const radioButton = document.querySelector('input[type="radio"]');
+    radioButton.disabled = true;
+
+  }
     </script>
   </body>
 </html>

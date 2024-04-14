@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myVote</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/voting.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Prompt&display=swap"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>
+          <a href="/">my<span class="distinct">V</span>ote</a>
+        </h1>
+        <div class="header__right">
+          <a href="/newpoll"
+            ><button class="green_button">Create vote</button></a
+          >
+          <p class="username">username</p>
+        </div>
+      </header>
+
+      <section class="votings_container">
+        <div class="voting_container">
+          <div class="voting_header">
+            <p class="voting_number">No. <%= voting.id %> Results</p>
+            <h2 class="voting_title"><%= voting.title %></h2>
+            <p class="voting_creator">Author: <%= voting.createdBy %></p>
+          </div>
+          <div class="voting_body">
+            <p class="voting_description"><%= voting.description %></p>
+            <div class="poll_container">
+              <% voting.candidates.forEach((candidate, index) => { %>
+              <p class="option_text">
+                  <%= candidate.name %> - <%= candidate.voteCount %> votes
+              </p>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

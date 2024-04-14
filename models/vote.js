@@ -30,7 +30,7 @@ class Vote {
 
     const votes = JSON.parse(rawData);
     return votes.find(
-      (vote) => vote.votingId === votingId && vote.userId === userId
+      (vote) => vote.votingId == votingId && vote.userId == userId
     );
   }
 

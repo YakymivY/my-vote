@@ -1,15 +1,20 @@
 const {Voting, getVotingsFromFile} = require("../models/voting");
 const Vote = require("../models/vote");
 
-exports.getVoting = (req, res, next) => {
+exports.getVoting = async (req, res, next) => {
   const votingId = parseInt(req.params.id);
   const authorId = req.cookies.authorId;
+  const vote = await Vote.findByVotingIdAndUserId(
+    votingId,
+    authorId
+  );
   Voting.fetchById(votingId, (voting) => {
     if (!voting) {
       return res.status(404).send("Voting not found");
     }
     console.log(voting);
-    res.render("voting", {voting, authorId});
+    console.log(vote)
+    res.render("voting", {voting, vote, authorId});
   });
 };
 
@@ -88,6 +93,7 @@ exports.castVote = async (req, res, next) => {
     const vote = new Vote(votingId, candidateId, userId);
   
     try {
+        await vote.castVote();
         Voting.incrementVotes(votingId, candidateId, (err) => {
           if (err) {
             console.error(err);
@@ -96,7 +102,6 @@ exports.castVote = async (req, res, next) => {
           console.log('Votes incremented successfully');
           res.status(200).send('Vote cast successfully');
         });
-        await vote.castVote();
       } catch (error) {
         console.error(error);
         res.status(400).send(error.message);
@@ -120,4 +125,22 @@ exports.castVote = async (req, res, next) => {
     }
     res.redirect(`/`);
   };
+
+  exports.getResult = async (req, res, next) => {
+    const votingId = parseInt(req.params.id);
+    console.log(`lol: ${votingId}`)
+    const userId = req.cookies.authorId;
+    Voting.fetchById(votingId, (voting) => {
+      if (!voting) {
+        return res.status(404).send("Voting not found");
+      }
+      const userId = req.cookies.authorId;
+
+      if(userId != voting.createdById){
+        res.status(403).send('Unathorized');
+      }
+      console.log(voting);
+      res.render("votingRes", {voting});
+    });
+  }
   
