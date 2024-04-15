@@ -15,16 +15,18 @@
             <h1><a href="/">my<span class="distinct">V</span>ote</a></h1>
             <div class="header__right">
                 <a href="newpoll"><button class="green_button">Create vote</button></a>
-                <p class="username">username</p>
+                <p class="username"><%= req.cookies.userName ? req.cookies.userName : 'Guest' %></p>
+
             </div>
         </header>
 
         <section class="votings_container">
             <h1 class="votings_title">Your opinion matters, Democracy is everything<span class="distinct">!</span></h1>
+            <% if (votings && votings.length > 0) { %>
             <% votings.forEach((voting) => { %>
               <div class="voting_card">
                 <div class="voting_card_header">
-                  <h4 class="voting_card_number">No. <%= voting.id %></h4>
+                  <h4 class="voting_card_number">No. <%= voting.id %> <% if (voting.status == 'closed') { %> Closed <% } %></h4>
                   <div class="voting_card_header_right">
                     <h4 class="voting_card_votes">Votes: <%= voting.votes %></h4>
                     <a href="/voting/<%= voting.id %>"><button class="green_button">Open</button></a>
@@ -36,6 +38,9 @@
                 </div>
               </div>
             <% }); %>
+            <% } else { %>
+              <p>No votings found.</p>
+          <% } %>
           </section>
           
     </div>

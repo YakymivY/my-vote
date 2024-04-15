@@ -23,7 +23,7 @@
           <a href="/newpoll"
             ><button class="green_button">Create vote</button></a
           >
-          <p class="username">username</p>
+          <p class="username"><%= req.cookies.userName ? req.cookies.userName : 'Guest' %></p>
         </div>
       </header>
 
@@ -33,19 +33,36 @@
             <p class="voting_number">No. <%= voting.id %> Results</p>
             <h2 class="voting_title"><%= voting.title %></h2>
             <p class="voting_creator">Author: <%= voting.createdBy %></p>
+            <p class="voting_creator">Total votes: <%= voting.votes %></p>
           </div>
           <div class="voting_body">
             <p class="voting_description"><%= voting.description %></p>
             <div class="poll_container">
               <% voting.candidates.forEach((candidate, index) => { %>
               <p class="option_text">
-                  <%= candidate.name %> - <%= candidate.voteCount %> votes
+                <%= candidate.name %> - <%= candidate.voteCount %> votes
               </p>
               <% }) %>
             </div>
           </div>
+          <a href="/voting/<%= voting.id %>/res" id="myLink"></a>
+          <button id="copyLinkButton">Copy Link</button>
         </div>
       </section>
     </div>
   </body>
+
+  <script>
+    const copyLinkButton = document.getElementById("copyLinkButton");
+    const myLink = document.getElementById("myLink");
+
+    copyLinkButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(myLink.href);
+        alert("Link copied to clipboard!");
+      } catch (err) {
+        console.error("Failed to copy link: ", err);
+      }
+    });
+  </script>
 </html>
