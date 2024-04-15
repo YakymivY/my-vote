@@ -56,14 +56,14 @@ class Voting {
     getVotingsFromFile((votings) => {
       const voting = votings.find((voting) => voting.id === parseInt(votingId));
       if (!voting) {
-        return reject(new Error("Voting not found"));
+        return reject(new Error('Voting not found'));
       }
 
       if (voting.createdById !== userId) {
-        return reject(new Error("Unauthorized to close this voting"));
+        return reject(new Error('Unauthorized to close this voting'));
       }
 
-      voting.status = "closed";
+      voting.status = 'closed';
       fs.writeFile(p, JSON.stringify(votings), (err) => {
         if (err) {
           callback(err);
@@ -103,18 +103,12 @@ class Voting {
         callback(new Error(`Voting with ID ${votingId} not found`));
         return;
       }
-      if (voting.status !== "active") {
-        callback(new Error("Voting is not active"));
+      if (voting.status !== 'active') {
+        callback(new Error('Voting is not active'));
       }
-      const candidate = voting.candidates.find(
-        (candidate) => candidate.id === candidateId
-      );
+      const candidate = voting.candidates.find((candidate) => candidate.id === candidateId);
       if (!candidate) {
-        callback(
-          new Error(
-            `Candidate with ID ${candidateId} not found in voting ${votingId}`
-          )
-        );
+        callback(new Error(`Candidate with ID ${candidateId} not found in voting ${votingId}`));
         return;
       }
       candidate.voteCount++;
@@ -128,6 +122,9 @@ class Voting {
       });
     });
   }
+  
+  
+  
 
   getCandidateById(candidateId) {
     return this.candidates.find((candidate) => candidate.id === candidateId);
@@ -164,9 +161,9 @@ class Voting {
           (err) => {
             if (err) {
               console.log(err);
-              reject(err);
+              reject(err); // Handle the error properly by rejecting the promise
             } else {
-              resolve();
+              resolve(); // Resolve the promise if there's no error
             }
           }
         );
@@ -209,4 +206,4 @@ class Candidate {
   }
 }
 
-module.exports = { Voting, getVotingsFromFile };
+module.exports = {Voting, getVotingsFromFile};

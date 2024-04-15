@@ -32,6 +32,7 @@ class Vote {
   }
 
   castVote() {
+    // Check if the user has already voted
     const existingVote = Vote.findByVotingIdAndUserId(
       this.votingId,
       this.userId

@@ -1,97 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>myVote</title>
-    <link rel="stylesheet" href="/styles/main.css" />
-    <link rel="stylesheet" href="/styles/newpoll.css" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Prompt&display=swap"
-    />
-  </head>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/newpoll.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt&display=swap">
+</head>
 
-  <body>
+<body>
     <div class="container">
-      <header class="header">
-        <h1>
-          <a href="/">my<span class="distinct">V</span>ote</a>
-        </h1>
-        <div class="header__right">
-          <p class="username">
-            <%= req.cookies.userName ? req.cookies.userName : 'Guest' %>
-          </p>
-        </div>
-      </header>
-
-      <section class="votings_container">
-        <div class="voting_card">
-          <h1>Create a new poll</h1>
-          <form id="surveyForm" action="/newpoll/add-voting" method="POST">
-            <label for="surveyTitle">Question/label:</label>
-            <input type="text" id="surveyTitle" name="surveyTitle" required />
-
-            <label for="surveyDescription">Description:</label>
-            <textarea
-              id="surveyDescription"
-              name="surveyDescription"
-              rows="3"
-            ></textarea>
-
-            <div id="options">
-              <div class="option">
-                <label>Poll answer:</label>
-                <div class="option-input">
-                  <input type="text" name="options" required />
-                  <button
-                    type="button"
-                    class="remove-option"
-                    onclick="removeOption(this)"
-                  >
-                    ✖
-                  </button>
-                </div>
-              </div>
-              <div class="option">
-                <label>Poll answer:</label>
-                <div class="option-input">
-                  <input type="text" name="options" required />
-                  <button
-                    type="button"
-                    class="remove-option"
-                    onclick="removeOption(this)"
-                  >
-                    ✖
-                  </button>
-                </div>
-              </div>
+        <header class="header">
+            <h1><a href="/">my<span class="distinct">V</span>ote</a></h1>
+            <div class="header__right">
+                <p class="username">username</p>
             </div>
+        </header>
 
-            <button type="button" class="green_button" onclick="addOption()">
-              Add answer
-            </button>
-            <button type="submit" class="green_button">Create poll</button>
-          </form>
-        </div>
-      </section>
+        <section class="votings_container">
+            <div class="voting_card">
+                <h1>Create a new poll</h1>
+                <form id="surveyForm" action="/newpoll/add-voting" method="POST">
+                    <label for="surveyTitle">Question/label:</label>
+                    <input type="text" id="surveyTitle" name="surveyTitle" required>
+
+                    <label for="surveyDescription">Description:</label>
+                    <textarea id="surveyDescription" name="surveyDescription" rows="3"></textarea>
+
+                    <div id="options">
+                        <div class="option">
+                            <label>Poll answer:</label>
+                            <div class="option-input">
+                                <input type="text" name="options" required>
+                                <button type="button" class="remove-option" onclick="removeOption(this)">✖</button>
+                            </div>
+                        </div>
+                        <div class="option">
+                            <label>Poll answer:</label>
+                            <div class="option-input">
+                                <input type="text" name="options" required>
+                                <button type="button" class="remove-option" onclick="removeOption(this)">✖</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="green_button" onclick="addOption()">Add answer</button>
+                    <button type="submit" class="green_button">Create poll</button>
+                </form>
+            </div>
+        </section>
     </div>
     <script>
-      function addOption() {
-        var optionDiv = document.createElement("div");
-        optionDiv.classList.add("option");
-        optionDiv.innerHTML =
-          '<label for="option">Poll answer:</label>' +
-          '<div class="option-input">' +
-          '<input type="text" name="options" required>' +
-          '<button type="button" class="remove-option" onclick="removeOption(this)">✖</button>' +
-          "</div>";
-        document.getElementById("options").appendChild(optionDiv);
-      }
+        function addOption() {
+                var optionDiv = document.createElement('div');
+                optionDiv.classList.add('option');
+                optionDiv.innerHTML = '<label for="option">Poll answer:</label>' +
+                    '<div class="option-input">' +
+                    '<input type="text" name="options" required>' +
+                    '<button type="button" class="remove-option" onclick="removeOption(this)">✖</button>' +
+                    '</div>';
+                document.getElementById('options').appendChild(optionDiv);
+            }
 
-      function removeOption(btn) {
-        btn.parentNode.parentNode.remove();
-      }
+        function removeOption(btn) {
+            btn.parentNode.parentNode.remove();
+        }
     </script>
-  </body>
+
+</body>
+
 </html>

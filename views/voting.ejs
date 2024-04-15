@@ -23,9 +23,7 @@
           <a href="/newpoll"
             ><button class="green_button">Create vote</button></a
           >
-          <p class="username">
-            <%= req.cookies.userName ? req.cookies.userName : 'Guest' %>
-          </p>
+          <p class="username">username</p>
         </div>
       </header>
 
@@ -38,55 +36,38 @@
           </div>
           <div class="voting_body">
             <p class="voting_description"><%= voting.description %></p>
-            <form
-              action="/voting/<%= voting.id %>/vote"
-              method="POST"
-              id="vote-form"
-            >
+            <form action="/voting/<%= voting.id %>/vote" method="POST" id="vote-form">
               <div class="poll_container">
                 <% voting.candidates.forEach((candidate, index) => { %>
                 <p class="option_text">
-                  <input
-                    type="radio"
-                    name="candidateId"
-                    id="answer<%= index + 1 %>"
-                    value="<%= candidate.id %>"
-                    checked
-                  />
+                  <input type="radio" name="candidateId" id="answer<%= index + 1 %>" value="<%= candidate.id %>" checked/>
                   <label for="answer<%= index + 1 %>"
-                    ><%= candidate.name %> <% if (voting.status === 'closed' ||
-                    vote) { %> - <%= candidate.voteCount %> votes <% } %> <% if
-                    (vote && vote.candidateId === candidate.id) { %> - Your
-                    choice <% } %></label
+                    ><%= candidate.name %> 
+                    <% if (voting.status === 'closed' || vote) { %>
+                      - <%= candidate.voteCount %> votes
+                    <% } %>
+                    <% if (vote && vote.candidateId === candidate.id) { %>
+                      - Your choice
+                    <% } %></label
                   >
                 </p>
                 <% }) %>
               </div>
               <div class="vote_button_container">
                 <% if (voting.status == 'active') { %>
-                <button type="submit" class="green_button" id="vote-button">
-                  <% if (vote) { %> You already voted <% } else { %> Vote <% }
-                  %>
-                </button>
+                  <button type="submit" class="green_button" id="vote-button">Vote</button>
                 <% } %>
               </div>
             </form>
-            <% if (voting.createdById == userId && voting.status == 'active') {
-            %>
-            <button id="close-voting-button">Close Voting</button>
+            <% if (voting.createdById == authorId && voting.status == 'active') { %>
+              <button id="close-voting-button">Close Voting</button>
+              <a href="/voting/<%= voting.id %>/res"><button id="res-button">Voting Results</button></a>
             <% } %>
 
-            <% if (voting.createdById == userId && voting.status == 'closed') {
+            <% if (voting.createdById == authorId && voting.status == 'closed') {
               %>
               <button id="open-voting-button">Open Voting</button>
               <% } %>
-
-              <% if (voting.createdById == userId) {
-                %>
-                <a href="/voting/<%= voting.id %>/res"
-                  ><button id="res-button">Voting Results</button></a
-                >
-                <% } %>
           </div>
         </div>
       </section>
@@ -95,7 +76,9 @@
     <script>
       const form = document.getElementById("vote-form");
       form.addEventListener("submit", async (event) => {
-        const candidateId = document.querySelector("input:checked").value;
+        const candidateId = document.querySelector(
+        'input:checked'
+      ).value;
         event.preventDefault();
 
         try {
@@ -108,13 +91,13 @@
           });
 
           if (response.ok) {
-            const message = await response.text();
-            showPopup(message);
-            location.reload();
-          } else {
-            const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
-          }
+  const message = await response.text();
+  showPopup(message);
+  location.reload();
+} else {
+  const errorMessage = await response.text();
+  showPopup(`Error: ${errorMessage}`);
+}
         } catch (error) {
           console.error(error);
           // Show error pop-up
@@ -125,74 +108,35 @@
         alert(message);
       }
 
-      const openVotingButton = document.getElementById("open-voting-button");
-      if (openVotingButton) {
-        openVotingButton.addEventListener("click", async () => {
-          try {
-            const response = await fetch(`/voting/<%= voting.id %>/open`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
+      document.getElementById("close-voting-button").addEventListener("click", async () => {
 
-            if (response.ok) {
-              alert("Voting opened successfully");
-              location.reload();
-            } else {
-              const errorMessage = await response.text();
-              alert(`Error: ${errorMessage}`);
-            }
-          } catch (error) {
-            console.error(error);
-            alert("Error: Failed to open voting");
-          }
-        });
+    try {
+      const response = await fetch(`/voting/<%= voting.id %>/close`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        alert("Voting closed successfully");
+        location.reload();
+      } else {
+        const errorMessage = await response.text();
+        alert(`Error: ${errorMessage}`);
       }
-
-      const closeVotingButton = document.getElementById("close-voting-button");
-      if (closeVotingButton) {
-        closeVotingButton.addEventListener("click", async () => {
-          try {
-            const response = await fetch(`/voting/<%= voting.id %>/close`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-
-            if (response.ok) {
-              alert("Voting closed successfully");
-              location.reload();
-            } else {
-              const errorMessage = await response.text();
-              alert(`Error: ${errorMessage}`);
-            }
-          } catch (error) {
-            console.error(error);
-            alert("Error: Failed to close voting");
-          }
-        });
-      }
-
-      
-      console.log("keke")
-      const voteCanId = `<%= vote.candidateId %>`;
-      const vote = `<%= vote %>`
-if (vote) {
-  console.log(voteCanId)
-  const radioButtons = document.querySelectorAll('input[type="radio"][name="candidateId"]');
-
-  for (const radioButton of radioButtons) {
-    if (radioButton.value == voteCanId) {
-      radioButton.checked = true;
-      break;
+    } catch (error) {
+      console.error(error);
+      alert("Error: Failed to close voting");
     }
+  });
+
+  if(`<%= voting.status %>` !== 'active' || `<%= vote %>`){
+    document.getElementById("vote-button").disabled = true;
+    const radioButton = document.querySelector('input[type="radio"]');
+    radioButton.disabled = true;
+
   }
-}
-
-
-
     </script>
   </body>
 </html>

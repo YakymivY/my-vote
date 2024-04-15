@@ -1,12 +1,12 @@
-const express = require("express");
+const express = require('express')
 const router = express.Router();
 
-const votingsController = require("../controllers/votings");
+const votingsController = require('../controllers/votings');
 
-router.get("/", (req, res) => {
-  res.render("newpoll", { req });
+router.get('/', (req, res) => {
+    res.render('newpoll'); 
 });
 
-router.post("/add-voting", votingsController.addVoting);
+router.post('/add-voting', votingsController.addVoting);
 
-module.exports = router;
+module.exports = router

@@ -1,16 +1,14 @@
-const express = require("express");
+const express = require('express')
 const router = express.Router();
 
-const votingsController = require("../controllers/votings");
+const votingsController = require('../controllers/votings');
 
-router.get("/:id", votingsController.getVoting);
+router.get('/:id', votingsController.getVoting);
 
-router.post("/:id/vote", votingsController.castVote);
+router.post('/:id/vote', votingsController.castVote);
 
-router.post("/:id/close", votingsController.closeVoting);
+router.post('/:id/close', votingsController.closeVoting);
 
-router.post("/:id/open", votingsController.openVoting);
+router.get('/:id/res', votingsController.getResult);
 
-router.get("/:id/res", votingsController.getResult);
-
-module.exports = router;
+module.exports = router
