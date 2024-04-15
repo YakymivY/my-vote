@@ -2,48 +2,60 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>myVote</title>
-    <link rel="stylesheet" href="/styles/main.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt&display=swap">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myVote</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt&display=swap">
 </head>
 
 <body>
-    <div class="container">
-        <header class="header">
-            <h1><a href="/">my<span class="distinct">V</span>ote</a></h1>
-            <div class="header__right">
-                <a href="newpoll"><button class="green_button">Create vote</button></a>
-                <p class="username"><%= req.cookies.userName ? req.cookies.userName : 'Guest' %></p>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/">my<span class="distinct">V</span>ote</a></h1>
+      <div class="header__right">
+        <a href="newpoll"><button class="green_button">Create vote</button></a>
+        <p class="username">
+          <%= req.cookies.userName ? req.cookies.userName : 'Guest' %>
+        </p>
 
-            </div>
-        </header>
+      </div>
+    </header>
 
-        <section class="votings_container">
-            <h1 class="votings_title">Your opinion matters, Democracy is everything<span class="distinct">!</span></h1>
-            <% if (votings && votings.length > 0) { %>
-            <% votings.forEach((voting) => { %>
-              <div class="voting_card">
-                <div class="voting_card_header">
-                  <h4 class="voting_card_number">No. <%= voting.id %> <% if (voting.status == 'closed') { %> Closed <% } %></h4>
-                  <div class="voting_card_header_right">
-                    <h4 class="voting_card_votes">Votes: <%= voting.votes %></h4>
-                    <a href="/voting/<%= voting.id %>"><button class="green_button">Open</button></a>
-                  </div>
-                </div>
-                <div class="voting_card_body">
-                  <h2 class="voting_card_title"><%= voting.title %></h2>
-                  <h4 class="voting_card_creator">Created by <%= voting.createdBy %></h4>
-                </div>
+    <section class="votings_container">
+      <h1 class="votings_title">Your opinion matters, Democracy is everything<span class="distinct">!</span></h1>
+      <% if (votings && votings.length> 0) { %>
+        <% votings.forEach((voting)=> { %>
+          <div class="voting_card">
+            <div class="voting_card_header">
+              <div class="voting_card_header_part">
+                <h4 class="voting_card_number">No. <%= voting.id %></h4>
+                <% if (voting.status=='closed' ) { %>
+                <h4 class="voting_card_closed">Closed</h4>
+                <img src="/images/lock.png" alt="" class="lock">
+                <% } %>
               </div>
-            <% }); %>
+              <div class="voting_card_header_part">
+                <h4 class="voting_card_votes">Votes: <%= voting.votes %>
+                </h4>
+                <a href="/voting/<%= voting.id %>"><button class="green_button">Open</button></a>
+              </div>
+            </div>
+            <div class="voting_card_body">
+              <h2 class="voting_card_title">
+                <%= voting.title %>
+              </h2>
+              <h4 class="voting_card_creator">Created by <%= voting.createdBy %>
+              </h4>
+            </div>
+          </div>
+          <% }); %>
             <% } else { %>
               <p>No votings found.</p>
-          <% } %>
-          </section>
-          
-    </div>
+              <% } %>
+    </section>
+
+  </div>
 
 
 </body>

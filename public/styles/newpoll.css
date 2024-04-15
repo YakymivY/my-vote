@@ -16,9 +16,12 @@ input[type="text"],
 input[type="radio"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 3px;
+}
+
+#surveyTitle {
+    margin-bottom: 10px;
 }
 
 .green_button{
@@ -47,6 +50,7 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: space-between; 
+    margin-bottom: 10px;
 }
 
 button.remove-option {

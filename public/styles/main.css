@@ -91,12 +91,21 @@ a {
     margin-bottom: 25px;
 }
 
+.voting_card_closed {
+    margin: 0 5px 0 10px;
+    color: grey;
+}
+
+.lock {
+    width: 16px;
+}
+
 .voting_card_votes {
     color: grey;
     margin-right: 25px;
 }
 
-.voting_card_header_right {
+.voting_card_header_part {
     display: flex;
     align-items: center;
 }

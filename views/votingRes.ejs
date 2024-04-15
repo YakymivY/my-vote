@@ -32,8 +32,12 @@
           <div class="voting_header">
             <p class="voting_number">No. <%= voting.id %> Results</p>
             <h2 class="voting_title"><%= voting.title %></h2>
-            <p class="voting_creator">Author: <%= voting.createdBy %></p>
-            <p class="voting_creator">Total votes: <%= voting.votes %></p>
+            <div class="voting_info_container">
+              <p class="voting_creator">Author: <%= voting.createdBy %>
+              </p>
+              <p class="voting_creator">Total votes: <%= voting.votes %>
+              </p>
+            </div>
           </div>
           <div class="voting_body">
             <p class="voting_description"><%= voting.description %></p>
@@ -45,8 +49,10 @@
               <% }) %>
             </div>
           </div>
-          <a href="/voting/<%= voting.id %>/res" id="myLink"></a>
-          <button id="copyLinkButton">Copy Link</button>
+          <div class="bottom_buttons_container">
+            <a href="/voting/<%= voting.id %>" id="myLink"></a>
+            <img src="/images/link.png" id="copyLinkButton" class="bottom_icon">
+          </div>
         </div>
       </section>
     </div>
