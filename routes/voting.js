@@ -9,6 +9,8 @@ router.post("/:id/vote", votingsController.castVote);
 
 router.post("/:id/close", votingsController.closeVoting);
 
+router.post("/:id/open", votingsController.openVoting);
+
 router.get("/:id/res", votingsController.getResult);
 
 module.exports = router;

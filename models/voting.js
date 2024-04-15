@@ -74,6 +74,28 @@ class Voting {
     });
   }
 
+  static async openVoting(votingId, userId, callback) {
+    getVotingsFromFile((votings) => {
+      const voting = votings.find((voting) => voting.id === parseInt(votingId));
+      if (!voting) {
+        return reject(new Error("Voting not found"));
+      }
+
+      if (voting.createdById !== userId) {
+        return reject(new Error("Unauthorized to open this voting"));
+      }
+
+      voting.status = "active";
+      fs.writeFile(p, JSON.stringify(votings), (err) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null);
+        }
+      });
+    });
+  }
+
   static incrementVotes(votingId, candidateId, callback) {
     getVotingsFromFile((votings) => {
       const voting = votings.find((voting) => voting.id === parseInt(votingId));

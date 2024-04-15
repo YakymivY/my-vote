@@ -83,6 +83,24 @@ exports.closeVoting = async (req, res, next) => {
   res.redirect(`/`);
 };
 
+exports.openVoting = async (req, res, next) => {
+  const votingId = req.params.id;
+  const userId = req.cookies.userId;
+  try {
+    Voting.openVoting(votingId, userId, (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error opening voting");
+      }
+      res.status(200).send("Voting opened successfully");
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error opening voting");
+  }
+  res.redirect(`/`);
+};
+
 exports.getResult = async (req, res, next) => {
   const votingId = parseInt(req.params.id);
   console.log(`lol: ${votingId}`);
