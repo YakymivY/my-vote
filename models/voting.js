@@ -131,13 +131,26 @@ class Voting {
     return nextId;
   };
 
-  static fetchAll(){
-    return db.execute('SELECT * FROM votings')
+  static fetchAll() {
+    return db.execute(
+      `SELECT votings.*, users.name AS creator_name
+       FROM votings
+       INNER JOIN users ON votings.user_id = users.id
+       ORDER BY votings.created_at DESC`
+    );
   }
+  
 
-  static fetchById(id){
-    return db.execute(`SELECT * FROM votings WHERE id = ?`, [id])
+  static fetchById(id) {
+    return db.execute(
+      `SELECT votings.*, users.name AS creator_name
+       FROM votings
+       INNER JOIN users ON votings.user_id = users.id
+       WHERE votings.id = ?`,
+      [id]
+    );
   }
+  
 
   static writeVotingsToFile(votings) {
     return new Promise((resolve, reject) => {

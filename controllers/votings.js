@@ -16,8 +16,9 @@ exports.getVoting = async (req, res, next) => {
           return res.status(404).send("Voting not found");
         }
         const voting = rows[0];
+        const creatorName = voting.creator_name;
         console.log(voteRows)
-        res.render("voting", { voting, candidates, vote:voteRows, userId, req });
+        res.render("voting", { voting, candidates, vote:voteRows, userId, creatorName, req });
       })
       .catch((err) => {
         console.error(err);
