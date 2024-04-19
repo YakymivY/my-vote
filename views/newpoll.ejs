@@ -76,8 +76,18 @@
       }
 
       function removeOption(btn) {
-        btn.parentNode.parentNode.remove();
+        const options = document.querySelectorAll('.option').length;
+        const inputField = btn.parentNode.querySelector('input');
+
+        if (options > 2) {
+          btn.parentNode.parentNode.remove();
+        } else {
+          inputField.value = '';
+          btn.disabled = true;
+        }
       }
+
+
     </script>
   </body>
 </html>

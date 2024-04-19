@@ -26,6 +26,11 @@ exports.addVoting = async (req, res, next) => {
     userId,
     userName
   );
+  if(!req.body.options || req.body.options.length < 2){
+    return res.status(400).send("Error: Amount of candidates should be more than 1");
+  }
+  console.log(req.body.options)
+
   for (const option of req.body.options) {
     voting.addCandidate(option);
   }
