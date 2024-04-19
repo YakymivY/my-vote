@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>myVote</title>
+<%- include('./includes/head.ejs') %>
   <link rel="stylesheet" href="/styles/main.css" />
   <link rel="stylesheet" href="/styles/voting.css" />
   <link rel="stylesheet" href="/styles/animations.css" />
@@ -13,17 +7,7 @@
 
 <body>
   <div class="container">
-    <header class="header">
-      <h1>
-        <a href="/">my<span class="distinct">V</span>ote</a>
-      </h1>
-      <div class="header__right">
-        <a href="/newpoll"><button class="green_button">Create vote</button></a>
-        <p class="username">
-          <%= req.cookies.userName ? req.cookies.userName : 'Guest' %>
-        </p>
-      </div>
-    </header>
+    <%- include('./includes/navigation.ejs') %>
 
     <section class="votings_container">
       <div class="voting_container">
@@ -57,7 +41,7 @@
                   <input type="radio" name="candidateId" id="answer<%= index + 1 %>" value="<%= candidate.id %>" />
                   <label for="answer<%= index + 1 %>">
                     <%= candidate.name %>
-                      <% if (voting.status==='closed' || vote) { %> - <%= candidate.voteCount %> votes <% } %>
+                      <% if (voting.status==='closed' || vote) { %> - <%= candidate.votes %> votes <% } %>
                   </label>
                 </p>
                 <% }) %>
@@ -99,7 +83,7 @@
     copyLinkButton.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(myLink.href);
-        alert('Link copied to clipboard!');
+        showPopup('Link copied to clipboard!');
       } catch (err) {
         console.error('Failed to copy link: ', err);
       }
@@ -150,15 +134,15 @@
           });
 
           if (response.ok) {
-            alert("Voting opened successfully");
+            showPopup("Voting opened successfully");
             location.reload();
           } else {
             const errorMessage = await response.text();
-            alert(`Error: ${errorMessage}`);
+            showPopup(`Error: ${errorMessage}`);
           }
         } catch (error) {
           console.error(error);
-          alert("Error: Failed to open voting");
+          showPopup("Error: Failed to open voting");
         }
       });
     }
@@ -175,15 +159,15 @@
           });
 
           if (response.ok) {
-            alert("Voting closed successfully");
+            showPopup("Voting closed successfully");
             location.reload();
           } else {
             const errorMessage = await response.text();
-            alert(`Error: ${errorMessage}`);
+            showPopup(`Error: ${errorMessage}`);
           }
         } catch (error) {
           console.error(error);
-          alert("Error: Failed to close voting");
+          showPopup("Error: Failed to close voting");
         }
       });
     }

@@ -1,0 +1,11 @@
+<header class="header">
+    <h1>
+      <a href="/">my<span class="distinct">V</span>ote</a>
+    </h1>
+    <div class="header__right">
+      <a href="/newpoll"><button class="green_button">Create vote</button></a>
+      <p class="username">
+        <%= req.cookies.userName ? req.cookies.userName : 'Guest' %>
+      </p>
+    </div>
+  </header>

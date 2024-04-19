@@ -1,37 +1,34 @@
 const fs = require("fs");
 const path = require("path");
-
 const p = path.join(__dirname, "..", "data", "votings.json");
 
 const getVotingsFromFile = (cb) => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  });
-};
-
-function fetchNextId() {
+  // using callbacks and promises along
   return new Promise((resolve, reject) => {
-    getVotingsFromFile((votings) => {
-      let nextId = 1;
-      if (votings.length > 0) {
-        const lastVote = votings[votings.length - 1];
-        nextId = lastVote.id + 1;
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        if (cb) {
+          cb(err, []);
+        } else {
+          reject(err);
+        }
+      } else {
+        if (cb) {
+          cb(null, JSON.parse(fileContent));
+        } else {
+          resolve(JSON.parse(fileContent));
+        }
       }
-      resolve(nextId);
     });
   });
-}
+};
 
 class Voting {
   constructor(title, description, createdById, createdBy) {
     this.candidates = [];
     (async () => {
       try {
-        const nextId = await fetchNextId();
+        const nextId = await Voting.fetchNextId();
         this.id = nextId;
         this.title = title;
         this.description = description;
@@ -51,147 +48,134 @@ class Voting {
     this.candidates.push(candidate);
   }
 
-  static async closeVoting(votingId, userId, callback) {
-    getVotingsFromFile((votings) => {
-      const voting = votings.find((voting) => voting.id === parseInt(votingId));
+  static async closeVoting(votingId, userId) {
+    try {
+      const votings = await getVotingsFromFile();
+      const voting = votings.find((voting) => voting.id == votingId);
       if (!voting) {
-        return reject(new Error("Voting not found"));
+        throw new Error("Voting not found");
       }
-
-      if (voting.createdById !== userId) {
-        return reject(new Error("Unauthorized to close this voting"));
+      if (voting.createdById != userId) {
+        throw new Error("Unauthorized to close this voting");
       }
-
       voting.status = "closed";
-      fs.writeFile(p, JSON.stringify(votings), (err) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null);
-        }
-      });
-    });
+      await Voting.writeVotingsToFile(votings);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
-  static async openVoting(votingId, userId, callback) {
-    getVotingsFromFile((votings) => {
-      const voting = votings.find((voting) => voting.id === parseInt(votingId));
+  static async openVoting(votingId, userId) {
+    try {
+      const votings = await getVotingsFromFile();
+      const voting = votings.find((voting) => voting.id == votingId);
       if (!voting) {
-        return reject(new Error("Voting not found"));
+        throw new Error("Voting not found");
       }
-
-      if (voting.createdById !== userId) {
-        return reject(new Error("Unauthorized to open this voting"));
+      if (voting.createdById != userId) {
+        throw new Error("Unauthorized to open this voting");
       }
-
       voting.status = "active";
-      fs.writeFile(p, JSON.stringify(votings), (err) => {
+      await Voting.writeVotingsToFile(votings);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  static incrementVotes(votingId, candidateId) {
+    return new Promise((resolve, reject) => {
+      getVotingsFromFile((err, votings) => {
         if (err) {
-          callback(err);
-        } else {
-          callback(null);
+          console.error(err);
+          reject(err);
+          return;
         }
+        const voting = votings.find((voting) => voting.id == votingId);
+        if (!voting) {
+          reject(new Error(`Voting with ID ${votingId} not found`));
+          return;
+        }
+        if (voting.status != "active") {
+          reject(new Error("Voting is not active"));
+          return;
+        }
+        const candidate = voting.candidates.find((candidate) => candidate.id == candidateId);
+        if (!candidate) {
+          reject(
+            new Error(
+              `Candidate with ID ${candidateId} not found in voting ${votingId}`
+            )
+          );
+          return;
+        }
+        candidate.votes++;
+        voting.votes++;
+        Voting.writeVotingsToFile(votings)
+          .then(() => resolve())
+          .catch((err) => reject(err));
       });
     });
   }
 
-  static incrementVotes(votingId, candidateId, callback) {
-    getVotingsFromFile((votings) => {
-      const voting = votings.find((voting) => voting.id === parseInt(votingId));
-      if (!voting) {
-        callback(new Error(`Voting with ID ${votingId} not found`));
-        return;
-      }
-      if (voting.status !== "active") {
-        callback(new Error("Voting is not active"));
-      }
-      const candidate = voting.candidates.find(
-        (candidate) => candidate.id === candidateId
-      );
-      if (!candidate) {
-        callback(
-          new Error(
-            `Candidate with ID ${candidateId} not found in voting ${votingId}`
-          )
-        );
-        return;
-      }
-      candidate.voteCount++;
-      voting.votes++;
-      fs.writeFile(p, JSON.stringify(votings), (err) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null);
-        }
-      });
-    });
-  }
-
-  getCandidateById(candidateId) {
-    return this.candidates.find((candidate) => candidate.id === candidateId);
+  static fromObject(obj) {
+    const voting = new Voting(obj.title, obj.description, obj.createdById, obj.createdBy);
+    voting.id = obj.id;
+    voting.candidates = obj.candidates;
+    voting.status = obj.status;
+    voting.votes = obj.votes;
+    return voting;
   }
 
   save() {
     return new Promise((resolve, reject) => {
-      getVotingsFromFile((votings) => {
-        const votingObject = {
-          id: this.id,
-          title: this.title,
-          description: this.description,
-          status: this.status,
-          candidates: this.candidates,
-          createdBy: this.createdBy,
-          createdById: this.createdById,
-          votes: this.votes,
-        };
-
-        votings.push(votingObject);
-
-        fs.writeFile(
-          p,
-          JSON.stringify(votings, (key, value) => {
-            if (key === "candidates") {
-              return value.map((candidate) => ({
-                id: candidate.id,
-                name: candidate.name,
-                voteCount: candidate.voteCount,
-              }));
-            }
-            return value;
-          }),
-          (err) => {
-            if (err) {
-              console.log(err);
-              reject(err);
-            } else {
-              resolve();
-            }
-          }
-        );
+      getVotingsFromFile((err, votings) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+          return;
+        }
+        votings.push(this);
+        Voting.writeVotingsToFile(votings)
+          .then(() => resolve())
+          .catch((err) => reject(err));
       });
     });
   }
 
-  static fetchAll(cb) {
-    getVotingsFromFile(cb);
+  static fetchNextId = async () => {
+    const votings = await getVotingsFromFile();
+    let nextId = 1;
+    if (votings.length > 0) {
+      const lastVote = votings[votings.length - 1];
+      nextId = lastVote.id + 1;
+    }
+    return nextId;
+  };
+
+  static async fetchById(id) {
+    // async/await
+    try {
+      const votings = await getVotingsFromFile();
+      const vote = votings.find((vote) => vote.id == id);
+      return vote;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
-  static fetchNextId(cb) {
-    getVotingsFromFile((votings) => {
-      let nextId = 1;
-      if (votings.length > 0) {
-        const lastVote = votings[votings.length - 1];
-        nextId = lastVote.id + 1;
-      }
-      cb(nextId);
-    });
-  }
-
-  static fetchById(id, cb) {
-    getVotingsFromFile((votings) => {
-      const vote = votings.find((vote) => vote.id === id);
-      cb(vote);
+  static writeVotingsToFile(votings) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(p, JSON.stringify(votings), (err) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
   }
 }
@@ -200,12 +184,9 @@ class Candidate {
   constructor(id, name) {
     this.id = id;
     this.name = name;
-    this.voteCount = 0;
+    this.votes = 0;
   }
 
-  incrementVoteCount() {
-    this.voteCount++;
-  }
 }
 
 module.exports = { Voting, getVotingsFromFile };

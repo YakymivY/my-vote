@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myVote</title>
+<%- include('./includes/head.ejs') %>
     <link rel="stylesheet" href="/styles/main.css" />
     <link rel="stylesheet" href="/styles/newpoll.css" />
     <link
@@ -14,16 +9,7 @@
 
   <body>
     <div class="container">
-      <header class="header">
-        <h1>
-          <a href="/">my<span class="distinct">V</span>ote</a>
-        </h1>
-        <div class="header__right">
-          <p class="username">
-            <%= req.cookies.userName ? req.cookies.userName : 'Guest' %>
-          </p>
-        </div>
-      </header>
+      <%- include('./includes/navigation.ejs') %>
 
       <section class="votings_container">
         <div class="voting_card">
