@@ -1,27 +1,4 @@
-const fs = require("fs");
-const path = require("path");
-const p = path.join(__dirname, "..", "data", "votings.json");
-
-const getVotingsFromFile = (cb) => {
-  // using callbacks and promises along
-  return new Promise((resolve, reject) => {
-    fs.readFile(p, (err, fileContent) => {
-      if (err) {
-        if (cb) {
-          cb(err, []);
-        } else {
-          reject(err);
-        }
-      } else {
-        if (cb) {
-          cb(null, JSON.parse(fileContent));
-        } else {
-          resolve(JSON.parse(fileContent));
-        }
-      }
-    });
-  });
-};
+const db = require('../util/database')
 
 class Voting {
   constructor(title, description, createdById, createdBy) {
@@ -154,16 +131,12 @@ class Voting {
     return nextId;
   };
 
-  static async fetchById(id) {
-    // async/await
-    try {
-      const votings = await getVotingsFromFile();
-      const vote = votings.find((vote) => vote.id == id);
-      return vote;
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+  static fetchAll(){
+    return db.execute('SELECT * FROM votings')
+  }
+
+  static fetchById(id){
+    return db.execute(`SELECT * FROM votings WHERE id = ?`, [id])
   }
 
   static writeVotingsToFile(votings) {
@@ -187,6 +160,10 @@ class Candidate {
     this.votes = 0;
   }
 
+  static fetchByVotingId(id){
+    return db.execute(`SELECT * FROM candidates WHERE voting_id = ?`, [id])
+  }
+
 }
 
-module.exports = { Voting, getVotingsFromFile };
+module.exports = {Voting, Candidate};

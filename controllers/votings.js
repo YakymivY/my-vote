@@ -1,19 +1,31 @@
-const { Voting, getVotingsFromFile } = require("../models/voting");
+const { Voting, Candidate } = require("../models/voting");
 const Vote = require("../models/vote");
 
 exports.getVoting = async (req, res, next) => {
   const votingId = req.params.id;
   const userId = req.cookies.userId;
+
   try {
-    const vote = Vote.findByVotingIdAndUserId(votingId, userId);
-    const voting = await Voting.fetchById(votingId);
-    if (!voting) {
-      return res.status(404).send("Voting not found");
-    }
-    res.render("voting", { voting, vote, userId, req });
+    Promise.all([
+      Voting.fetchById(votingId),
+      Candidate.fetchByVotingId(votingId),
+      Vote.fetchByVotingIdAndUserId(votingId, userId),
+    ])
+      .then(([[rows, fieldData], [candidates], [voteRows, voteFields]]) => {
+        if (!rows.length) {
+          return res.status(404).send("Voting not found");
+        }
+        const voting = rows[0];
+        console.log(voteRows)
+        res.render("voting", { voting, candidates, vote:voteRows, userId, req });
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("An error occurred while fetching the data");
+      });
   } catch (err) {
     console.error(err);
-    res.status(500).send("An error occurred while fetching the voting");
+    res.status(500).send("An error occurred while fetching the data");
   }
 };
 
@@ -45,21 +57,21 @@ exports.castVote = async (req, res, next) => {
 
   const vote = new Vote(votingId, candidateId, userId);
 
-    const existingVote = Vote.findByVotingIdAndUserId(votingId, userId);
-    console.log(existingVote);
-    if (existingVote) {
-      return res.status(400).send("User has already voted");
-    }
+  const existingVote = Vote.findByVotingIdAndUserId(votingId, userId);
+  console.log(existingVote);
+  if (existingVote) {
+    return res.status(400).send("User has already voted");
+  }
 
-    try {
-      await Voting.incrementVotes(votingId, candidateId);
-      vote.castVote();
-      res.status(200).send("Vote casted successfully");
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("An error occurred while casting the vote");
-    }
-}
+  try {
+    await Voting.incrementVotes(votingId, candidateId);
+    vote.castVote();
+    res.status(200).send("Vote casted successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while casting the vote");
+  }
+};
 
 exports.closeVoting = async (req, res, next) => {
   const votingId = req.params.id;

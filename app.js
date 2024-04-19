@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3002;
+const db = require('./util/database')
 
 const bodyParser = require('body-parser');
 const cookieParser = require("cookie-parser");
@@ -13,7 +14,12 @@ const cookiesController = require("./controllers/cookies");
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
-  
+
+// db.execute(`
+// `).then(result => {console.log(result)}).catch(error => {console.log(error)})
+
+//db.execute(`SELECT * FROM votes`).then(result => {console.log(result)}).catch(error => {console.log(error)})
+
 app.use(cookieParser());
 app.use(cookiesController.setUserCookies);
 app.use(bodyParser.urlencoded({ extended: false }));

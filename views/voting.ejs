@@ -36,12 +36,12 @@
           </p>
           <form action="/voting/<%= voting.id %>/vote" method="POST" id="vote-form">
             <div class="poll_container">
-              <% voting.candidates.forEach((candidate, index)=> { %>
+              <% candidates.forEach((candidate, index)=> { %>
                 <p class="option_text">
                   <input type="radio" name="candidateId" id="answer<%= index + 1 %>" value="<%= candidate.id %>" />
                   <label for="answer<%= index + 1 %>">
                     <%= candidate.name %>
-                      <% if (voting.status==='closed' || vote) { %> - <%= candidate.votes %> votes <% } %>
+                      <% if (voting.status=='closed' || (vote && vote.length)) { %> - <%= candidate.votes_num %> votes <% } %>
                   </label>
                 </p>
                 <% }) %>
@@ -49,7 +49,7 @@
             <div class="vote_button_container">
               <% if (voting.status=='active' ) { %>
                 <button type="submit" class="green_button" id="vote-button">
-                  <% if (vote) { %> You already voted <% } else { %> Vote <% } %>
+                  <% if (vote && vote.length) { %> You already voted <% } else { %> Vote <% } %>
                 </button>
                 <% } %>
             </div>
