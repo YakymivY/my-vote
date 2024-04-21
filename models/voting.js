@@ -21,6 +21,7 @@ class Voting {
   }
 
   static async incrementVotes(votingId, candidateId, userId) {
+    // demonstrates transaction confirmation in case of success and transaction rollback in case of failure
     return new Promise(async (resolve, reject) => {
       let connection;
       try {
@@ -94,8 +95,9 @@ class Voting {
     candidates
   ) {
     return new Promise(async (resolve, reject) => {
+      let connection;
       try {
-        const connection = await db.getConnection();
+        connection = await db.getConnection();
         await connection.beginTransaction();
 
         const result = await connection.execute(

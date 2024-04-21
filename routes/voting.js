@@ -11,6 +11,8 @@ router.post("/:id/close", votingsController.closeVoting);
 
 router.post("/:id/open", votingsController.openVoting);
 
+router.post("/:id/retract", votingsController.retractVote);
+
 router.get("/:id/res", votingsController.getResult);
 
 module.exports = router;

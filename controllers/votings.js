@@ -101,3 +101,16 @@ exports.getResult = async (req, res, next) => {
       res.status(500).send("An error occurred while fetching the data");
     });
 };
+
+exports.retractVote = async (req, res, next) => {
+  const votingId = req.params.id;
+  const userId = req.cookies.userId;
+
+  try {
+    await Vote.retractVote(votingId, userId);
+    res.status(200).send("Vote retracted successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while retracting the vote");
+  }
+};

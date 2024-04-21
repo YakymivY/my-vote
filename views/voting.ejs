@@ -56,6 +56,11 @@
           </form>
 
           <div class="bottom_buttons_container">
+            <% if (vote && vote.length) { %>
+              <form action="/voting/<%= voting.id %>/retract" method="POST" id="retract-vote-form">
+                <button type="submit">Retract Vote</button>
+              </form>
+              <% } %>
             <a href="/voting/<%= voting.id %>" id="myLink"></a>
             <img src="/images/link.png" id="copyLinkButton" class="bottom_icon">
 
@@ -90,13 +95,15 @@
     });
 
 
-    const form = document.getElementById("vote-form");
-    form.addEventListener("submit", async (event) => {
-      const candidateId = document.querySelector("input:checked").value;
+    const voteForm = document.getElementById("vote-form");
+    voteForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-
+      if (document.querySelector("input:checked") === null) {
+        showPopup("No candidate selected!");
+        return;
+      }
+      const candidateId = document.querySelector("input:checked").value;
       try {
-        console.log("button click")
         const response = await fetch(`/voting/<%= voting.id %>/vote`, {
           method: "POST",
           headers: {
@@ -119,6 +126,32 @@
         showPopup("Error: Failed to cast vote");
       }
     });
+
+    const retractForm = document.getElementById("retract-vote-form");
+    if(retractForm){
+      retractForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetch(`/voting/<%= voting.id %>/retract`, {
+            method: "POST",
+          });
+
+          if (response.ok) {
+            const message = await response.text();
+            showPopup(message);
+            location.reload();
+          } else {
+            const errorMessage = await response.text();
+            showPopup(`Error: ${errorMessage}`);
+            return;
+          }
+        } catch (error) {
+          console.error(error);
+          showPopup("Error: Failed to cast vote");
+        }
+      });
+    }
+
     function showPopup(message) {
       alert(message);
     }

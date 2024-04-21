@@ -1,3 +1,3 @@
-Vote retraction -- for D in CRUD
-Look into має бути присутня хоча б одна бізнес-операція, на прикладі якої можна буде продемонструвати підтвердження транзакції у випадку успіху, та відкат транзакції у випадку помилки.
 User auth
+
+Frontend: button to return from voting results page to voting page, retract vote button styles
