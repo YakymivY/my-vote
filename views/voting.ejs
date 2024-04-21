@@ -60,13 +60,13 @@
             <img src="/images/link.png" id="copyLinkButton" class="bottom_icon">
 
 
-            <% if (voting.createdById==userId && voting.status=='active' ) { %>
+            <% if (voting.user_id==userId && voting.status=='active' ) { %>
               <img src="/images/lock.png" id="close-voting-button" class="bottom_icon">
               <% } %>
-                <% if (voting.createdById==userId && voting.status=='closed' ) { %>
+                <% if (voting.user_id==userId && voting.status=='closed' ) { %>
                   <img src="/images/unlock.png" id="open-voting-button" class="bottom_icon">
                   <% } %>
-                    <% if (voting.createdById==userId) { %>
+                    <% if (voting.user_id==userId) { %>
                       <a href="/voting/<%= voting.id %>/res" class="bottom_link">Results</a>
                       <% } %>
           </div>
@@ -96,6 +96,7 @@
       event.preventDefault();
 
       try {
+        console.log("button click")
         const response = await fetch(`/voting/<%= voting.id %>/vote`, {
           method: "POST",
           headers: {
@@ -173,11 +174,11 @@
     }
 
     const vote = `<%= JSON.stringify(vote) %>`;
-    `<% if (vote) { %>`;
+    `<% if (vote && vote.length) { %>`;
     if (document.getElementById("vote-button")) {
       document.getElementById("vote-button").disabled = true;
     }
-    const voteCanId = "<%= vote.candidateId%>";
+    const voteCanId = "<%= vote[0].candidate_id%>";
     const radioButtons = document.querySelectorAll(
       'input[type="radio"][name="candidateId"]'
     );

@@ -5,68 +5,50 @@ exports.getVoting = async (req, res, next) => {
   const votingId = req.params.id;
   const userId = req.cookies.userId;
 
-  try {
-    Promise.all([
-      Voting.fetchById(votingId),
-      Candidate.fetchByVotingId(votingId),
-      Vote.fetchByVotingIdAndUserId(votingId, userId),
-    ])
-      .then(([[rows, fieldData], [candidates], [voteRows, voteFields]]) => {
-        if (!rows.length) {
-          return res.status(404).send("Voting not found");
-        }
-        const voting = rows[0];
-        const creatorName = voting.creator_name;
-        console.log(voteRows)
-        res.render("voting", { voting, candidates, vote:voteRows, userId, creatorName, req });
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send("An error occurred while fetching the data");
-      });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("An error occurred while fetching the data");
-  }
+  Promise.all([
+    Voting.fetchVotingwithCreatorById(votingId),
+    Candidate.fetchByVotingId(votingId),
+    Vote.fetchByVotingIdAndUserId(votingId, userId),
+  ])
+    .then(([[rows, fieldData], [candidates], [voteRows, voteFields]]) => {
+      if (!rows.length) {
+        return res.status(404).send("Voting not found");
+      }
+      const voting = rows[0];
+      const creatorName = voting.creator_name;
+      res.render("voting", { voting, candidates, vote:voteRows, userId, creatorName, req });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("An error occurred while fetching the data");
+    });
 };
 
 exports.addVoting = async (req, res, next) => {
   const userId = req.cookies.userId;
-  const userName = req.cookies.userName;
-  const voting = new Voting(
-    req.body.surveyTitle,
-    req.body.surveyDescription,
-    userId,
-    userName
-  );
-  for (const option of req.body.options) {
-    voting.addCandidate(option);
-  }
   try {
-    await voting.save();
-    res.redirect(`/voting/${voting.id}`);
+    const votingId = await Voting.createWithCandidates(
+      req.body.surveyTitle,
+      req.body.surveyDescription,
+      userId,
+      req.body.options
+    );
+
+    res.redirect(`/voting/${votingId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error saving voting");
   }
 };
 
+
 exports.castVote = async (req, res, next) => {
   const votingId = req.params.id;
   const candidateId = req.body.candidateId;
   const userId = req.cookies.userId;
 
-  const vote = new Vote(votingId, candidateId, userId);
-
-  const existingVote = Vote.findByVotingIdAndUserId(votingId, userId);
-  console.log(existingVote);
-  if (existingVote) {
-    return res.status(400).send("User has already voted");
-  }
-
   try {
-    await Voting.incrementVotes(votingId, candidateId);
-    vote.castVote();
+    await Voting.incrementVotes(votingId, candidateId, userId);
     res.status(200).send("Vote casted successfully");
   } catch (error) {
     console.error(error);
@@ -77,14 +59,16 @@ exports.castVote = async (req, res, next) => {
 exports.closeVoting = async (req, res, next) => {
   const votingId = req.params.id;
   const userId = req.cookies.userId;
+
   try {
     await Voting.closeVoting(votingId, userId);
     res.status(200).send("Voting closed successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error closing voting");
+    res.status(500).send("An error occurred while closing the voting");
   }
 };
+
 
 exports.openVoting = async (req, res, next) => {
   const votingId = req.params.id;
@@ -100,19 +84,20 @@ exports.openVoting = async (req, res, next) => {
 
 exports.getResult = async (req, res, next) => {
   const votingId = req.params.id;
-  try {
-    const voting = await Voting.fetchById(votingId);
-    if (!voting) {
-      return res.status(404).send("Voting not found");
-    }
-    // results are available to all
-    // const userId = req.cookies.userId;
-    // if (userId != voting.createdById) {
-    //   res.status(403).send("Unathorized");
-    // }
-    res.render("votingRes", { voting, req });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("An error occurred while fetching the voting");
-  }
+  Promise.all([
+    Voting.fetchVotingwithCreatorById(votingId),
+    Candidate.fetchByVotingId(votingId),
+  ])
+    .then(([[rows, fieldData], [candidates]]) => {
+      if (!rows.length) {
+        return res.status(404).send("Voting not found");
+      }
+      const voting = rows[0];
+      const creatorName = voting.creator_name;
+      res.render("votingRes", { voting, candidates, creatorName, req });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("An error occurred while fetching the data");
+    });
 };

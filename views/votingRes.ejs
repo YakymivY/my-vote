@@ -18,18 +18,18 @@
             <p class="voting_number">No. <%= voting.id %> Results</p>
             <h2 class="voting_title"><%= voting.title %></h2>
             <div class="voting_info_container">
-              <p class="voting_creator">Author: <%= voting.createdBy %>
+              <p class="voting_creator">Author: <%= creatorName %>
               </p>
-              <p class="voting_creator">Total votes: <%= voting.votes %>
+              <p class="voting_creator">Total votes: <%= voting.votes_num %>
               </p>
             </div>
           </div>
           <div class="voting_body">
             <p class="voting_description"><%= voting.description %></p>
             <div class="poll_container">
-              <% voting.candidates.forEach((candidate, index) => { %>
+              <% candidates.forEach((candidate, index) => { %>
               <p class="option_text">
-                <%= candidate.name %> - <%= candidate.votes %> votes
+                <%= candidate.name %> - <%= candidate.votes_num %> votes
               </p>
               <% }) %>
             </div>
