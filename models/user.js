@@ -19,11 +19,10 @@ class User {
 
   static async create(name, login, password) {
     const hashedPassword = await bcrypt.hash(password, 12);
-    return db.execute("INSERT INTO users (name, login, password) VALUES (?, ?, ?)", [
-      name,
-      login,
-      hashedPassword,
-    ]);
+    return db.execute(
+      "INSERT INTO users (name, login, password) VALUES (?, ?, ?)",
+      [name, login, hashedPassword]
+    );
   }
 
   static comparePassword(password, storedPassword) {

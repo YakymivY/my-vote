@@ -176,7 +176,7 @@ class Voting {
         connection = await db.getConnection();
         await connection.beginTransaction();
 
-        const [votingRows] = await Voting.fetchById(votingId, connection);
+        const [votingRows] = await Voting.fetchById(votingId);
 
         if (!votingRows.length) {
           reject(new Error("Voting not found"));
@@ -192,6 +192,53 @@ class Voting {
           `UPDATE votings SET status = 'active' WHERE id = ?`,
           [votingId]
         );
+
+        await connection.commit();
+        resolve();
+      } catch (err) {
+        if (connection) {
+          await connection.rollback();
+        }
+        console.error(err);
+        reject(err);
+      } finally {
+        if (connection) {
+          connection.release();
+        }
+      }
+    });
+  }
+
+  static async deleteVoting(votingId, userId) {
+    return new Promise(async (resolve, reject) => {
+      let connection;
+      try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [votingRows] = await Voting.fetchById(votingId);
+
+        if (!votingRows.length) {
+          reject(new Error("Voting not found"));
+          return;
+        }
+
+        if (votingRows[0].user_id != userId) {
+          reject(new Error("Unauthorized to delete this voting"));
+          return;
+        }
+
+        await connection.execute(`DELETE FROM votes WHERE voting_id = ?`, [
+          votingId,
+        ]);
+
+        await connection.execute(`DELETE FROM candidates WHERE voting_id = ?`, [
+          votingId,
+        ]);
+
+        await connection.execute(`DELETE FROM votings WHERE id = ?`, [
+          votingId,
+        ]);
 
         await connection.commit();
         resolve();

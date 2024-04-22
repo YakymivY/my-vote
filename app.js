@@ -9,7 +9,6 @@ const cookieParser = require("cookie-parser");
 const mainPageRoutes = require('./routes/main');
 const votingRoutes = require('./routes/voting');
 const newPollRoutes = require('./routes/newpoll');
-const cookiesController = require("./controllers/cookies");
 const authRoutes = require("./routes/auth");
 
 app.listen(port, () => {
@@ -21,13 +20,7 @@ app.listen(port, () => {
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-    next();
-  });
   
-  
-
 app.use("/auth", authRoutes);
 app.use('/newpoll', newPollRoutes);
 app.use('/voting', votingRoutes);

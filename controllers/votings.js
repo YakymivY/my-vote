@@ -51,7 +51,6 @@ exports.castVote = async (req, res, next) => {
   const votingId = req.params.id;
   const candidateId = req.body.candidateId;
   const userId = req.cookies.userId;
-  console.log(req.cookies)
 
   try {
     await Voting.incrementVotes(votingId, candidateId, userId);
@@ -119,3 +118,16 @@ exports.retractVote = async (req, res, next) => {
     res.status(500).send("An error occurred while retracting the vote");
   }
 };
+
+exports.deleteVoting = async (req, res, next) => {
+  const votingId = req.params.id;
+  const userId = req.cookies.userId;
+  try {
+    await Voting.deleteVoting(votingId, userId);
+    res.redirect(`/`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while deleting the voting");
+  }
+  
+}
