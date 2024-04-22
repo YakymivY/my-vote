@@ -10,6 +10,7 @@ const mainPageRoutes = require('./routes/main');
 const votingRoutes = require('./routes/voting');
 const newPollRoutes = require('./routes/newpoll');
 const cookiesController = require("./controllers/cookies");
+const authRoutes = require("./routes/auth");
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
@@ -17,14 +18,17 @@ app.listen(port, () => {
 
 // db.execute(`
 // `).then(result => {console.log(result)}).catch(error => {console.log(error)})
-
-//db.execute(`SELECT * FROM votes`).then(result => {console.log(result)}).catch(error => {console.log(error)})
-
 app.use(cookieParser());
-app.use(cookiesController.setUserCookies);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+    next();
+  });
+  
+  
 
+app.use("/auth", authRoutes);
 app.use('/newpoll', newPollRoutes);
 app.use('/voting', votingRoutes);
 app.use('/', mainPageRoutes);

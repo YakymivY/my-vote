@@ -4,7 +4,8 @@ const router = express.Router();
 const votingsController = require("../controllers/votings");
 
 router.get("/", (req, res) => {
-  res.render("newpoll", { req });
+  userId = req.cookies.userId
+  res.render("newpoll", { req, userId });
 });
 
 router.post("/add-voting", votingsController.addVoting);

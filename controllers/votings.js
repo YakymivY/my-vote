@@ -3,8 +3,7 @@ const Vote = require("../models/vote");
 
 exports.getVoting = async (req, res, next) => {
   const votingId = req.params.id;
-  const userId = req.cookies.userId;
-
+  const userId = req.cookies.userId ? req.cookies.userId : null;
   Promise.all([
     Voting.fetchVotingwithCreatorById(votingId),
     Candidate.fetchByVotingId(votingId),
@@ -16,7 +15,14 @@ exports.getVoting = async (req, res, next) => {
       }
       const voting = rows[0];
       const creatorName = voting.creator_name;
-      res.render("voting", { voting, candidates, vote:voteRows, userId, creatorName, req });
+      res.render("voting", {
+        voting,
+        candidates,
+        vote: voteRows,
+        userId,
+        creatorName,
+        req,
+      });
     })
     .catch((err) => {
       console.error(err);
@@ -41,11 +47,11 @@ exports.addVoting = async (req, res, next) => {
   }
 };
 
-
 exports.castVote = async (req, res, next) => {
   const votingId = req.params.id;
   const candidateId = req.body.candidateId;
   const userId = req.cookies.userId;
+  console.log(req.cookies)
 
   try {
     await Voting.incrementVotes(votingId, candidateId, userId);
@@ -68,7 +74,6 @@ exports.closeVoting = async (req, res, next) => {
     res.status(500).send("An error occurred while closing the voting");
   }
 };
-
 
 exports.openVoting = async (req, res, next) => {
   const votingId = req.params.id;

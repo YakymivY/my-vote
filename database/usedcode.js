@@ -67,3 +67,15 @@ INSERT INTO candidates (voting_id, name) VALUES
 
 
 ALTER TABLE votings ADD COLUMN votes_num INT NOT NULL DEFAULT 0;`
+
+
+db.execute(`
+CREATE TABLE sessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  token VARCHAR(255) UNIQUE,
+  expires_at TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+  
+`).then(result => {console.log(result)}).catch(error => {console.log(error)})

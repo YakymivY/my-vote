@@ -1,8 +1,6 @@
 <%- include('./includes/head.ejs') %>
-  <link rel="stylesheet" href="/styles/main.css" />
   <link rel="stylesheet" href="/styles/voting.css" />
   <link rel="stylesheet" href="/styles/animations.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" />
 </head>
 
 <body>
@@ -81,6 +79,7 @@
   </div>
 
   <script>
+    const voteForm = document.getElementById("vote-form");
 
     const copyLinkButton = document.getElementById('copyLinkButton');
     const myLink = document.getElementById('myLink');
@@ -95,21 +94,22 @@
     });
 
 
-    const voteForm = document.getElementById("vote-form");
+    
     voteForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (document.querySelector("input:checked") === null) {
         showPopup("No candidate selected!");
         return;
       }
-      const candidateId = document.querySelector("input:checked").value;
       try {
+        const candidateId = document.querySelector("input:checked").value;
+
         const response = await fetch(`/voting/<%= voting.id %>/vote`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify({ candidateId }),
+          body: JSON.stringify({candidateId }),
         });
 
         if (response.ok) {

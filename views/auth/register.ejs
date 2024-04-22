@@ -1,0 +1,23 @@
+<%- include('../includes/head.ejs') %>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs') %>
+  <h1>Register</h1>
+  <form action="/auth/register" method="post">
+    <div>
+        <label for="name">Name:</label>
+        <input type="name" name="name" id="name" required>
+      </div>
+    <div>
+      <label for="login">Login:</label>
+      <input type="login" name="login" id="login" required>
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" required>
+    </div>
+    <button type="submit">Register</button>
+  </form>
+  <p>Already have an account? <a href="/auth/login">Login here</a></p>
+</body>
+</html>
