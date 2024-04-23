@@ -11,6 +11,7 @@
     width: 100%;
     height: 100%;
     border-bottom: 1px solid lightgrey;
+    padding-bottom: 10px;
 }
 
 .voting_header_part {
@@ -79,4 +80,14 @@
 
 .bottom_link:hover {
     color: black;
+}
+
+.back_link {
+    display: flex;
+}
+
+.back_arrow {
+    height: 1.2em;
+    margin-right: 10px;
+    cursor: pointer;
 }

@@ -54,6 +54,30 @@ a {
     background-color: rgb(0, 90, 0);
 }
 
+.transparent_button {
+    font-size: 1em;
+    margin-right: 10px;
+    padding: 5px 10px;
+    background: transparent;
+    color: rgb(0, 110, 0);
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.transparent_button:hover {
+    border: 2px solid rgb(0, 110, 0);
+}
+
+.green_link {
+    color: rgb(0, 110, 0);
+}
+
+.green_link:hover {
+    text-decoration: underline;
+}
+
 /*end HEADER STYLES*/
 
 /*VOTINGS STYLES*/
@@ -122,3 +146,65 @@ a {
 }
 
 /*end VOTINGS STYLES*/
+
+
+/* ALERT STYLES */
+
+.alert {
+    width: 400px;
+    position: fixed;
+    bottom: 10px;
+    right: 0;
+    padding: 20px 25px;
+    z-index: 1000;
+    border: 3px solid rgb(0, 110, 0);
+    background-color: white;
+    border-radius: 10px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.alert.show {
+    animation: show_slide 1s ease forwards;
+}
+
+.alert.showAlert {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@keyframes show_slide {
+    0% {
+        transform: translateX(100%);
+    }
+
+    40% {
+        transform: translateX(-10%);
+    }
+
+    100% {
+        transform: translateX(-10px);
+    }
+}
+
+.alert.hide {
+    animation: hide_slide 1s ease forwards;
+}
+
+@keyframes hide_slide {
+    0% {
+        transform: translateX(-10px);
+    }
+
+    40% {
+        transform: translateX(-10%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.alert_message {
+    font-size: 1em;
+}

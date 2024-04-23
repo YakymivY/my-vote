@@ -11,6 +11,7 @@
       <div class="voting_container">
         <div class="voting_header">
           <div class="voting_header_part">
+            <a href="/" class="back_link"><img src="/images/back.png" class="back_arrow" alt=""></a>
             <p class="voting_number">No. <%= voting.id %>
             </p>
             <% if (voting.status=='closed' ) { %>
@@ -56,7 +57,7 @@
           <div class="bottom_buttons_container">
             <% if (vote && vote.length) { %>
               <form action="/voting/<%= voting.id %>/retract" method="POST" id="retract-vote-form">
-                <button type="submit">Retract Vote</button>
+                <button type="submit" class="transparent_button">Retract Vote</button>
               </form>
               <% } %>
             <a href="/voting/<%= voting.id %>" id="myLink"></a>

@@ -1,23 +1,28 @@
 <%- include('../includes/head.ejs') %>
-</head>
-<body>
-    <%- include('../includes/navigation.ejs') %>
-  <h1>Login</h1>
-  <form action="/auth/login" method="POST" id="login-form">
-    <div>
-      <label for="login">Login:</label>
-      <input type="login" name="login" id="login" required>
-    </div>
-    <div>
-      <label for="password">Password:</label>
-      <input type="password" name="password" id="password" required>
-    </div>
-    <button type="submit">Login</button>
-  </form>
-  <p>Don't have an account? <a href="/auth/register">Register here</a></p>
+  <link rel="stylesheet" href="/styles/auth.css" />
+  </head>
 
-  <script>
-  </script>
-</body>
+  <body>
+    <div class="container auth_container">
+      <section class="auth_box">
+        <h1 class="auth_title">Login</h1>
+        <form action="/auth/login" method="POST" id="login-form" class="auth_form">
+          <div>
+            <input type="login" name="login" id="login" required placeholder="Login" class="auth_input" autocomplete="off">
+          </div>
+          <div>
+            <input type="password" name="password" id="password" required placeholder="Password" class="auth_input" autocomplete="off">
+          </div>
+          <button type="submit" class="green_button" style="margin: 0;">Login</button>
+        </form>
+        <p class="auth_reminder">Don't have an account? <a href="/auth/register" class="green_link">Register here</a>
+        </p>
+      </section>
 
-</html>
+    </div>
+
+    <script>
+    </script>
+  </body>
+
+  </html>

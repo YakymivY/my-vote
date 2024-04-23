@@ -1,17 +1,15 @@
 <header class="header">
-    <h1>
-      <a href="/">my<span class="distinct">V</span>ote</a>
-    </h1>
-    <div class="header__right">
-      <a href="/newpoll"><button class="green_button">Create vote</button></a>
-      <% if (userId) { %>
-        <form action="/auth/logout" method="POST">
-          <button type="submit" class="green_button">Log out</button>
-        </form>
+  <h1>
+    <a href="/">my<span class="distinct">V</span>ote</a>
+  </h1>
+  <div class="header__right">
+    <a href="/newpoll"><button class="green_button">Create vote</button></a>
+    <% if (userId) { %>
+      <form action="/auth/logout" method="POST">
+        <button type="submit" class="transparent_button">Log out</button>
+      </form>
       <% } else { %>
-        <a href="/auth/login"><button class="green_button">Log in</button></a> <% } %>
-      <p class="username">
-        Тут просту іконку
-      </p>
-    </div>
-  </header>
+        <a href="/auth/login"><button class="green_button">Log in</button></a>
+        <% } %>
+  </div>
+</header>

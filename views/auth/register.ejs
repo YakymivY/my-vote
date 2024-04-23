@@ -1,23 +1,24 @@
 <%- include('../includes/head.ejs') %>
+  <link rel="stylesheet" href="/styles/auth.css" />
 </head>
 <body>
-    <%- include('../includes/navigation.ejs') %>
-  <h1>Register</h1>
-  <form action="/auth/register" method="post">
-    <div>
-        <label for="name">Name:</label>
-        <input type="name" name="name" id="name" required>
-      </div>
-    <div>
-      <label for="login">Login:</label>
-      <input type="login" name="login" id="login" required>
-    </div>
-    <div>
-      <label for="password">Password:</label>
-      <input type="password" name="password" id="password" required>
-    </div>
-    <button type="submit">Register</button>
-  </form>
-  <p>Already have an account? <a href="/auth/login">Login here</a></p>
+  <div class="container auth_container">
+    <section class="auth_box">
+      <h1 class="auth_title">Register</h1>
+      <form action="/auth/register" method="post" class="auth_form">
+        <div>
+            <input type="name" name="name" id="name" required placeholder="Name" class="auth_input" autocomplete="off">
+        </div>
+        <div>
+          <input type="login" name="login" id="login" required placeholder="Login" class="auth_input" autocomplete="off">
+        </div>
+        <div>
+          <input type="password" name="password" id="password" required placeholder="Password" class="auth_input" autocomplete="off">
+        </div>
+        <button type="submit" class="green_button" style="margin: 0;">Register</button>
+      </form>
+      <p class="auth_reminder">Already have an account? <a href="/auth/login" class="green_link">Login here</a></p>
+    </section>
+  </div>
 </body>
 </html>
