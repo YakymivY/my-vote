@@ -13,11 +13,10 @@ class Session {
   }
 
   static create(user_id, token, expires_at) {
-    return db.execute("INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, ?)", [
-      user_id,
-      token,
-      expires_at,
-    ]);
+    return db.execute(
+      "INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, ?)",
+      [user_id, token, expires_at]
+    );
   }
 
   static deleteByUser(user_id) {

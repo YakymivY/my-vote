@@ -39,7 +39,7 @@ class Vote {
           reject(new Error("Vote not found"));
           return;
         }
-        const candidateId = existingVoteRows[0].candidate_id
+        const candidateId = existingVoteRows[0].candidate_id;
 
         await connection.execute(
           `DELETE FROM votes WHERE voting_id = ? AND user_id = ?`,
