@@ -10,6 +10,7 @@ const mainPageRoutes = require('./routes/main');
 const votingRoutes = require('./routes/voting');
 const newPollRoutes = require('./routes/newpoll');
 const authRoutes = require("./routes/auth");
+const errorController = require('./controllers/error');
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
@@ -28,3 +29,7 @@ app.use('/', mainPageRoutes);
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+
+app.use((req, res) => {
+    errorController.notFound(req, res);
+  });

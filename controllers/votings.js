@@ -88,6 +88,7 @@ exports.openVoting = async (req, res, next) => {
 
 exports.getResult = async (req, res, next) => {
   const votingId = req.params.id;
+  const userId = req.cookies.userId ? req.cookies.userId : null;
   Promise.all([
     Voting.fetchVotingwithCreatorById(votingId),
     Candidate.fetchByVotingId(votingId),
@@ -98,7 +99,7 @@ exports.getResult = async (req, res, next) => {
       }
       const voting = rows[0];
       const creatorName = voting.creator_name;
-      res.render("votingRes", { voting, candidates, creatorName, req });
+      res.render("votingRes", { voting, candidates, creatorName, req, userId});
     })
     .catch((err) => {
       console.error(err);
