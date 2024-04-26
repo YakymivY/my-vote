@@ -9,6 +9,6 @@ router.get("/", (req, res) => {
   res.render("newpoll", { req, userId });
 });
 
-router.post("/add-voting", auth, votingsController.addVoting);
+router.post("/add-voting", votingsController.addVoting);
 
 module.exports = router;

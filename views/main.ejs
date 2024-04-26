@@ -20,7 +20,7 @@
                       <% } %>
                   </div>
                   <div class="voting_card_header_part">
-                    <h4 class="voting_card_votes">Votes: <%= voting.votes_num %>
+                    <h4 class="voting_card_votes">Votes: <%= voting.votesNum %>
                     </h4>
                     <a href="/voting/<%= voting.id %>"><button class="green_button">Open</button></a>
                   </div>
@@ -29,7 +29,7 @@
                   <h2 class="voting_card_title">
                     <%= voting.title %>
                   </h2>
-                  <h4 class="voting_card_creator">Created by <%= voting.creator_name %>
+                  <h4 class="voting_card_creator">Created by <%= voting.creator.name %>
                   </h4>
                 </div>
               </div>

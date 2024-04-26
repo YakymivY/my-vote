@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3002;
-const db = require('./util/database')
+const sequelize = require('./util/database')
 
 const bodyParser = require('body-parser');
 const cookieParser = require("cookie-parser");
@@ -11,13 +11,16 @@ const votingRoutes = require('./routes/voting');
 const newPollRoutes = require('./routes/newpoll');
 const authRoutes = require("./routes/auth");
 const errorController = require('./controllers/error');
+require('./models/associations');
 
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});
+sequelize.sync().then(result=>{
+    app.listen(port, () => {
+        console.log(`Server is running at http://localhost:${port}`);
+    });
+}).catch(error=>{
+    console.log(error)
+})
 
-// db.execute(`
-// `).then(result => {console.log(result)}).catch(error => {console.log(error)})
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

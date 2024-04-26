@@ -1,33 +1,36 @@
-const db = require("../util/database");
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
+const Sequelize = require("sequelize");
+const sequelize = require("../util/database");
 
-class User {
-  constructor(id, name, login, password) {
-    this.id = id;
-    this.name = name;
-    this.login = login;
-    this.password = password;
-  }
+const User = sequelize.define("User", {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  login: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
 
-  static fetchAll() {
-    return db.execute("SELECT * FROM users");
-  }
-
-  static fetchByLogin(login) {
-    return db.execute("SELECT * FROM users WHERE login = ?", [login]);
-  }
-
-  static async create(name, login, password) {
-    const hashedPassword = await bcrypt.hash(password, 12);
-    return db.execute(
-      "INSERT INTO users (name, login, password) VALUES (?, ?, ?)",
-      [name, login, hashedPassword]
-    );
-  }
-
-  static comparePassword(password, storedPassword) {
-    return bcrypt.compare(password, storedPassword);
-  }
-}
+User.createUser = async (name, login, password) => {
+  const hashedPassword = await bcrypt.hash(password, 12);
+  const user = await User.create({
+    name: name,
+    login: login,
+    password: hashedPassword,
+  });
+  return user;
+};
 
 module.exports = User;

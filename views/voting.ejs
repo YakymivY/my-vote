@@ -25,7 +25,7 @@
           <div class="voting_info_container">
             <p class="voting_creator">Author: <%= creatorName %>
             </p>
-            <p class="voting_creator">Total votes: <%= voting.votes_num %>
+            <p class="voting_creator">Total votes: <%= voting.votesNum %>
             </p>
           </div>
         </div>
@@ -40,7 +40,7 @@
                   <input type="radio" name="candidateId" id="answer<%= index + 1 %>" value="<%= candidate.id %>" />
                   <label for="answer<%= index + 1 %>">
                     <%= candidate.name %>
-                      <% if (voting.status=='closed' || (vote && vote.length)) { %> - <%= candidate.votes_num %> votes <% } %>
+                      <% if (voting.status=='closed' || (vote && vote.length)) { %> - <%= candidate.votesNum %> votes <% } %>
                   </label>
                 </p>
                 <% }) %>
