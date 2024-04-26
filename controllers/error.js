@@ -1,6 +1,7 @@
 const ErrorController = {
     notFound: (req, res) => {
-      res.status(404).render('404');
+      const userId = req.cookies.userId ? req.cookies.userId : null;
+      res.status(404).render('404', {userId});
     },
   };
   

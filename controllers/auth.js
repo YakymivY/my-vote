@@ -12,7 +12,7 @@ exports.register = async (req, res, next) => {
       return res.status(409).send("User with that login already exists");
     }
     await User.create(name, login, password);
-    res.status(201).send("User created");
+    res.redirect(`/auth/login`);
   } catch (err) {
     console.log(err);
     res.status(500).send("Error creating user");
@@ -51,7 +51,7 @@ exports.login = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });
-    res.status(200).send("Logged in");
+    res.redirect(`/`);
   } catch (err) {
     console.log(err);
     res.status(500).send("Error logging in");
