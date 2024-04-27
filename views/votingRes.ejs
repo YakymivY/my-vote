@@ -36,7 +36,12 @@
         </div>
       </section>
     </div>
+    <div class="alert hide" id="alert">
+      <p class="alert_message" id="alert_msg"></p>
+    </div>
   </body>
+
+  <script src="/scripts/main.js"></script>
 
   <script>
     const copyLinkButton = document.getElementById("copyLinkButton");
@@ -45,7 +50,7 @@
     copyLinkButton.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(myLink.href);
-        alert("Link copied to clipboard!");
+        showMessage("Link copied to clipboard!");
       } catch (err) {
         console.error("Failed to copy link: ", err);
       }

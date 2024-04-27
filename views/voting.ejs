@@ -82,9 +82,14 @@
         </div>
       </div>
     </section>
+    <div class="alert hide" id="alert">
+      <p class="alert_message" id="alert_msg"></p>
+    </div>
   </div>
+  <script src="/scripts/main.js"></script>
 
   <script>
+    
     const voteForm = document.getElementById("vote-form");
 
     const copyLinkButton = document.getElementById('copyLinkButton');
@@ -93,7 +98,7 @@
     copyLinkButton.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(myLink.href);
-        showPopup('Link copied to clipboard!');
+        showMessage('Link copied to clipboard!');
       } catch (err) {
         console.error('Failed to copy link: ', err);
       }
@@ -104,7 +109,7 @@
     voteForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (document.querySelector("input:checked") === null) {
-        showPopup("No candidate selected!");
+        showMessage("No candidate selected!");
         return;
       }
       try {
@@ -120,16 +125,16 @@
 
         if (response.ok) {
           const message = await response.text();
-          showPopup(message);
+          showMessage(message);
           location.reload();
         } else {
           const errorMessage = await response.text();
-          showPopup(`Error: ${errorMessage}`);
+          showMessage(`Error: ${errorMessage}`);
           return;
         }
       } catch (error) {
         console.error(error);
-        showPopup("Error: Failed to cast vote");
+        showMessage("Error: Failed to cast vote");
       }
     });
 
@@ -144,22 +149,18 @@
 
           if (response.ok) {
             const message = await response.text();
-            showPopup(message);
+            showMessage(message);
             location.reload();
           } else {
             const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
+            showMessage(`Error: ${errorMessage}`);
             return;
           }
         } catch (error) {
           console.error(error);
-          showPopup("Error: Failed to cast vote");
+          showMessage("Error: Failed to cast vote");
         }
       });
-    }
-
-    function showPopup(message) {
-      alert(message);
     }
 
     const openVotingButton = document.getElementById("open-voting-button");
@@ -174,15 +175,15 @@
           });
 
           if (response.ok) {
-            showPopup("Voting opened successfully");
+            showMessage("Voting opened successfully");
             location.reload();
           } else {
             const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
+            showMessage(`Error: ${errorMessage}`);
           }
         } catch (error) {
           console.error(error);
-          showPopup("Error: Failed to open voting");
+          showMessage("Error: Failed to open voting");
         }
       });
     }
@@ -199,15 +200,15 @@
           });
 
           if (response.ok) {
-            showPopup("Voting closed successfully");
+            showMessage("Voting closed successfully");
             location.reload();
           } else {
             const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
+            showMessage(`Error: ${errorMessage}`);
           }
         } catch (error) {
           console.error(error);
-          showPopup("Error: Failed to close voting");
+          showMessage("Error: Failed to close voting");
         }
       });
     }
