@@ -126,7 +126,9 @@
         if (response.ok) {
           const message = await response.text();
           showMessage(message);
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+    }, 1000);
         } else {
           const errorMessage = await response.text();
           showMessage(`Error: ${errorMessage}`);
@@ -150,7 +152,9 @@
           if (response.ok) {
             const message = await response.text();
             showMessage(message);
+            setTimeout(() => {
             location.reload();
+    }, 1000);
           } else {
             const errorMessage = await response.text();
             showMessage(`Error: ${errorMessage}`);
@@ -176,7 +180,9 @@
 
           if (response.ok) {
             showMessage("Voting opened successfully");
+            setTimeout(() => {
             location.reload();
+    }, 1000);
           } else {
             const errorMessage = await response.text();
             showMessage(`Error: ${errorMessage}`);
@@ -201,7 +207,9 @@
 
           if (response.ok) {
             showMessage("Voting closed successfully");
+            setTimeout(() => {
             location.reload();
+    }, 1000);
           } else {
             const errorMessage = await response.text();
             showMessage(`Error: ${errorMessage}`);

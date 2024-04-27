@@ -21,5 +21,40 @@
       <p class="auth_reminder">Already have an account? <a href="/auth/login" class="green_link">Login here</a></p>
     </section>
   </div>
+  <div class="alert hide" id="alert">
+    <p class="alert_message" id="alert_msg"></p>
+  </div>
+
+  <script src="/scripts/main.js"></script>
+
+  <script>
+    const form = document.querySelector('.auth_form');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.querySelector('#name').value;
+  const login = document.querySelector('#login').value;
+  const password = document.querySelector('#password').value;
+
+  try {
+    const response = await fetch('/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, login, password })
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Something went wrong');
+    }
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+  </script>
 </body>
 </html>

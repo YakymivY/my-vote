@@ -21,9 +21,39 @@
       </section>
 
     </div>
+    <div class="alert hide" id="alert">
+      <p class="alert_message" id="alert_msg"></p>
+    </div>
 
-    <script>
-    </script>
+    <script src="/scripts/main.js"></script>
+
+  <script>
+    const form = document.querySelector('#login-form');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const login = document.querySelector('#login').value;
+  const password = document.querySelector('#password').value;
+
+  try {
+    const response = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ login, password })
+    });
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Something went wrong');
+    }
+    window.location.href = '/';
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+  </script>
   </body>
 
   </html>
