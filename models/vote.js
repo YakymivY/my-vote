@@ -34,6 +34,10 @@ Vote.retractVote = async (votingId, userId) => {
   const transaction = await sequelize.transaction();
 
   try {
+    const voting = await Voting.findById(votingId);
+    if (!voting || voting.status == "closed") {
+      throw new Error(`Voting with ID ${votingId} not found or closed`);
+    }
     const vote = await Vote.findbyVotingIdandUserId(votingId, userId);
 
     if (!vote) {
@@ -47,7 +51,6 @@ Vote.retractVote = async (votingId, userId) => {
     const candidate = await Candidate.findByPk(candidateId);
     await candidate.decrement("votesNum", { by: 1, transaction });
 
-    const voting = await Voting.findById(votingId);
     await voting.decrement("votesNum", { by: 1, transaction });
 
     await transaction.commit();

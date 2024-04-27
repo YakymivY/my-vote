@@ -55,14 +55,14 @@
           </form>
 
           <div class="bottom_buttons_container">
-            <% if (vote) { %>
+            <% if (vote && voting.status != "closed") { %>
               <form action="/voting/<%= voting.id %>/retract" method="POST" id="retract-vote-form">
                 <button type="submit" class="transparent_button">Retract Vote</button>
               </form>
               <% } %>
               <% if (voting.userId==userId) { %>
                 <form action="/voting/<%= voting.id %>/delete" method="POST" id="delete-voting-form">
-                  <button type="submit">Delete Voting</button>
+                  <button class="transparent_button" type="submit">Delete Voting</button>
                 </form>
                 <% } %>
             <a href="/voting/<%= voting.id %>" id="myLink"></a>
@@ -238,6 +238,15 @@
           radioButton.disabled = true;
         }
       }
+    }
+    `<% } %>`;
+
+    `<% if (voting.status == "closed") { %>`;
+      const radioButtons2 = document.querySelectorAll(
+      'input[type="radio"][name="candidateId"]'
+    );
+    for (const radioButton of radioButtons2) {
+        radioButton.disabled = true;
     }
     `<% } %>`;
   </script>
