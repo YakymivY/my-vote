@@ -34,7 +34,7 @@ Vote.retractVote = async (votingId, userId) => {
   const transaction = await sequelize.transaction();
 
   try {
-    const vote = await Vote.findbyVotingIdandUserId(votingId, userId)
+    const vote = await Vote.findbyVotingIdandUserId(votingId, userId);
 
     if (!vote) {
       throw new Error("Vote not found");
@@ -45,10 +45,10 @@ Vote.retractVote = async (votingId, userId) => {
     await vote.destroy({ transaction });
 
     const candidate = await Candidate.findByPk(candidateId);
-    await candidate.decrement('votesNum', { by: 1, transaction });
+    await candidate.decrement("votesNum", { by: 1, transaction });
 
     const voting = await Voting.findById(votingId);
-    await voting.decrement('votesNum', { by: 1, transaction });
+    await voting.decrement("votesNum", { by: 1, transaction });
 
     await transaction.commit();
   } catch (error) {
@@ -57,6 +57,5 @@ Vote.retractVote = async (votingId, userId) => {
     throw error;
   }
 };
-
 
 module.exports = Vote;

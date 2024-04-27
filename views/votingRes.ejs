@@ -13,7 +13,7 @@
             <p class="voting_number">No. <%= voting.id %> Results</p>
             <h2 class="voting_title"><%= voting.title %></h2>
             <div class="voting_info_container">
-              <p class="voting_creator">Author: <%= creatorName %>
+              <p class="voting_creator">Author: <%= voting.creator.name %>
               </p>
               <p class="voting_creator">Total votes: <%= voting.votesNum %>
               </p>

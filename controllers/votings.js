@@ -16,7 +16,9 @@ exports.getVoting = async (req, res, next) => {
     const candidates = await Candidate.findAll({ where: { votingId } });
     let vote;
     if (userId) {
-      vote = await Vote.findOne({ where: { votingId:votingId, userId:userId } });
+      vote = await Vote.findOne({
+        where: { votingId: votingId, userId: userId },
+      });
     }
     vote = vote ? vote.dataValues : undefined;
     res.render("voting", {
@@ -38,7 +40,12 @@ exports.addVoting = async (req, res, next) => {
   const options = req.body.options;
   const userId = req.userId;
   try {
-    result = await Voting.createWithCandidates(title, description, userId, options);
+    result = await Voting.createWithCandidates(
+      title,
+      description,
+      userId,
+      options
+    );
     res.redirect(`/voting/${result.dataValues.id}`);
   } catch (error) {
     console.error(error);
@@ -86,22 +93,25 @@ exports.openVoting = async (req, res, next) => {
 exports.getResult = async (req, res, next) => {
   const votingId = req.params.id;
   const userId = req.cookies.userId ? req.cookies.userId : null;
-  Promise.all([
-    Voting.fetchVotingwithCreatorById(votingId),
-    Candidate.fetchByVotingId(votingId),
-  ])
-    .then(([[rows, fieldData], [candidates]]) => {
-      if (!rows.length) {
-        return res.status(404).send("Voting not found");
-      }
-      const voting = rows[0];
-      const creatorName = voting.creator_name;
-      res.render("votingRes", { voting, candidates, creatorName, req, userId });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("An error occurred while fetching the data");
+
+  try {
+    const voting = await Voting.findByPk(votingId, {
+      include: [{ model: User, as: "creator" }],
     });
+    if (!voting) {
+      return res.status(404).send("Voting not found");
+    }
+    const candidates = await Candidate.findAll({ where: { votingId } });
+    res.render("votingRes", {
+      voting,
+      candidates,
+      userId,
+      req,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while fetching the data");
+  }
 };
 
 exports.retractVote = async (req, res, next) => {

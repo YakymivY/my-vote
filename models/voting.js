@@ -118,8 +118,8 @@ Voting.incrementVotes = async (votingId, candidateId, userId) => {
       { votingId: votingId, candidateId: candidateId, userId: userId },
       { transaction }
     );
-    await voting.increment('votesNum', { by: 1, transaction });
-    await candidate.increment('votesNum', { by: 1, transaction });
+    await voting.increment("votesNum", { by: 1, transaction });
+    await candidate.increment("votesNum", { by: 1, transaction });
 
     await transaction.commit();
   } catch (error) {
