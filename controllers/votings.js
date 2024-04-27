@@ -19,7 +19,6 @@ exports.getVoting = async (req, res, next) => {
       vote = await Vote.findOne({ where: { votingId:votingId, userId:userId } });
     }
     vote = vote ? vote.dataValues : undefined;
-    console.log("Vote:", vote)
     res.render("voting", {
       voting,
       candidates,
@@ -39,7 +38,7 @@ exports.addVoting = async (req, res, next) => {
   const options = req.body.options;
   const userId = req.userId;
   try {
-    await Voting.createWithCandidates(title, description, userId, options);
+    result = await Voting.createWithCandidates(title, description, userId, options);
     res.redirect(`/voting/${result.dataValues.id}`);
   } catch (error) {
     console.error(error);

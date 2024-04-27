@@ -91,56 +91,25 @@ Voting.findById = async (votingId) => {
   return await Voting.findByPk(votingId);
 };
 
-Candidate.findbyIdandVotingId = async (candidateId, votingId) => {
-  return await Candidate.findOne({
-    where: { id: candidateId, votingId: votingId },
-  });
-};
-
-Voting.prototype.incrementVotesNum = function (transaction) {
-  // prototype lets call on instances not only on classes
-  const voting = this;
-
-  return sequelize.transaction(
-    async (t) => {
-      voting.votesNum++;
-      await voting.save({ transaction: t });
-    },
-    { transaction }
-  );
-};
-
-Candidate.prototype.incrementVotesNum = function (transaction) {
-  const candidate = this;
-
-  return sequelize.transaction(
-    async (t) => {
-      candidate.votesNum++;
-      await candidate.save({ transaction: t });
-    },
-    { transaction }
-  );
+Candidate.findbyId = async (candidateId) => {
+  return await Candidate.findByPk(candidateId);
 };
 
 Voting.incrementVotes = async (votingId, candidateId, userId) => {
   const transaction = await sequelize.transaction();
 
   try {
-    const hasVoted = await Vote.hasUserVoted(votingId, userId);
+    const hasVoted = await Vote.findbyVotingIdandUserId(votingId, userId);
 
     if (hasVoted) {
       throw new Error("User has already voted");
     }
     const voting = await Voting.findById(votingId);
-    console.log(voting);
     if (!voting || voting.status == "closed") {
       throw new Error(`Voting with ID ${votingId} not found or closed`);
     }
 
-    const candidate = await Candidate.findbyIdandVotingId(
-      candidateId,
-      votingId
-    );
+    const candidate = await Candidate.findbyId(candidateId);
     if (!candidate) {
       throw new Error(`Candidate with ID ${candidateId} not found`);
     }
@@ -149,9 +118,81 @@ Voting.incrementVotes = async (votingId, candidateId, userId) => {
       { votingId: votingId, candidateId: candidateId, userId: userId },
       { transaction }
     );
+    await voting.increment('votesNum', { by: 1, transaction });
+    await candidate.increment('votesNum', { by: 1, transaction });
 
-    await candidate.increment("votesNum", { transaction });
-    await voting.increment("votesNum", { transaction });
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    throw error;
+  }
+};
+
+Voting.deleteVoting = async (votingId, userId) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const voting = await Voting.findById(votingId);
+    if (!voting) {
+      throw new Error("Voting not found");
+    }
+
+    if (voting.userId != userId) {
+      throw new Error("Unauthorized to delete this voting");
+    }
+
+    await Vote.destroyVotes(votingId, transaction);
+
+    await voting.destroy({ transaction });
+
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    throw error;
+  }
+};
+
+Voting.closeVoting = async (votingId, userId) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const voting = await Voting.findById(votingId);
+
+    if (!voting) {
+      throw new Error("Voting not found");
+    }
+
+    if (voting.userId != userId) {
+      throw new Error("Unauthorized to close this voting");
+    }
+
+    await voting.update({ status: "closed" }, { transaction });
+
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    throw error;
+  }
+};
+
+Voting.openVoting = async (votingId, userId) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const voting = await Voting.findById(votingId);
+
+    if (!voting) {
+      throw new Error("Voting not found");
+    }
+
+    if (voting.userId != userId) {
+      throw new Error("Unauthorized to open this voting");
+    }
+
+    await voting.update({ status: "active" }, { transaction });
 
     await transaction.commit();
   } catch (error) {
