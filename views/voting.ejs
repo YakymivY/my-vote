@@ -55,14 +55,14 @@
           </form>
 
           <div class="bottom_buttons_container">
-            <% if (vote && vote.length) { %>
+            <% if (vote && vote.length && voting.status!="closed") { %>
               <form action="/voting/<%= voting.id %>/retract" method="POST" id="retract-vote-form">
                 <button type="submit" class="transparent_button">Retract Vote</button>
               </form>
               <% } %>
               <% if (voting.user_id==userId) { %>
                 <form action="/voting/<%= voting.id %>/delete" method="POST" id="delete-voting-form">
-                  <button type="submit">Delete Voting</button>
+                  <button class="transparent_button" type="submit">Delete Voting</button>
                 </form>
                 <% } %>
             <a href="/voting/<%= voting.id %>" id="myLink"></a>
@@ -84,161 +84,177 @@
     </section>
   </div>
 
+  <div class="alert hide" id="alert">
+    <p class="alert_message" id="alert_msg"></p>
+  </div>
+  </div>
+  <script src="/scripts/main.js"></script>
+  
   <script>
     const voteForm = document.getElementById("vote-form");
+const copyLinkButton = document.getElementById("copyLinkButton");
+const myLink = document.getElementById("myLink");
 
-    const copyLinkButton = document.getElementById('copyLinkButton');
-    const myLink = document.getElementById('myLink');
+copyLinkButton.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(myLink.href);
+    showMessage("Link copied to clipboard!");
+  } catch (err) {
+    console.error("Failed to copy link: ", err);
+  }
+});
 
-    copyLinkButton.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(myLink.href);
-        showPopup('Link copied to clipboard!');
-      } catch (err) {
-        console.error('Failed to copy link: ', err);
-      }
+voteForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (document.querySelector("input:checked") === null) {
+    showMessage("No candidate selected!");
+    return;
+  }
+  try {
+    const candidateId = document.querySelector("input:checked").value;
+
+    const response = await fetch(`/voting/<%= voting.id %>/vote`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ candidateId }),
     });
 
+    if (response.ok) {
+      const message = await response.text();
+      showMessage(message);
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    } else {
+      const errorMessage = await response.text();
+      showMessage(`Error: ${errorMessage}`);
+      return;
+    }
+  } catch (error) {
+    console.error(error);
+    showMessage("Error: Failed to cast vote");
+  }
+});
 
-    
-    voteForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (document.querySelector("input:checked") === null) {
-        showPopup("No candidate selected!");
+const retractForm = document.getElementById("retract-vote-form");
+if (retractForm) {
+  retractForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(`/voting/<%= voting.id %>/retract`, {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        const message = await response.text();
+        showMessage(message);
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      } else {
+        const errorMessage = await response.text();
+        showMessage(`Error: ${errorMessage}`);
         return;
       }
-      try {
-        const candidateId = document.querySelector("input:checked").value;
+    } catch (error) {
+      console.error(error);
+      showMessage("Error: Failed to cast vote");
+    }
+  });
+}
+const openVotingButton = document.getElementById("open-voting-button");
+if (openVotingButton) {
+  openVotingButton.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`/voting/<%= voting.id %>/open`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        const response = await fetch(`/voting/<%= voting.id %>/vote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({candidateId }),
-        });
-
-        if (response.ok) {
-          const message = await response.text();
-          showPopup(message);
+      if (response.ok) {
+        showMessage("Voting opened successfully");
+        setTimeout(() => {
           location.reload();
-        } else {
-          const errorMessage = await response.text();
-          showPopup(`Error: ${errorMessage}`);
-          return;
-        }
-      } catch (error) {
-        console.error(error);
-        showPopup("Error: Failed to cast vote");
+        }, 1000);
+      } else {
+        const errorMessage = await response.text();
+        showMessage(`Error: ${errorMessage}`);
       }
-    });
+    } catch (error) {
+      console.error(error);
+      showMessage("Error: Failed to open voting");
+    }
+  });
+}
 
-    const retractForm = document.getElementById("retract-vote-form");
-    if(retractForm){
-      retractForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        try {
-          const response = await fetch(`/voting/<%= voting.id %>/retract`, {
-            method: "POST",
-          });
-
-          if (response.ok) {
-            const message = await response.text();
-            showPopup(message);
-            location.reload();
-          } else {
-            const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
-            return;
-          }
-        } catch (error) {
-          console.error(error);
-          showPopup("Error: Failed to cast vote");
-        }
+const closeVotingButton = document.getElementById("close-voting-button");
+if (closeVotingButton) {
+  closeVotingButton.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`/voting/<%= voting.id %>/close`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-    }
 
-    function showPopup(message) {
-      alert(message);
-    }
-
-    const openVotingButton = document.getElementById("open-voting-button");
-    if (openVotingButton) {
-      openVotingButton.addEventListener("click", async () => {
-        try {
-          const response = await fetch(`/voting/<%= voting.id %>/open`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (response.ok) {
-            showPopup("Voting opened successfully");
-            location.reload();
-          } else {
-            const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
-          }
-        } catch (error) {
-          console.error(error);
-          showPopup("Error: Failed to open voting");
-        }
-      });
-    }
-
-    const closeVotingButton = document.getElementById("close-voting-button");
-    if (closeVotingButton) {
-      closeVotingButton.addEventListener("click", async () => {
-        try {
-          const response = await fetch(`/voting/<%= voting.id %>/close`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (response.ok) {
-            showPopup("Voting closed successfully");
-            location.reload();
-          } else {
-            const errorMessage = await response.text();
-            showPopup(`Error: ${errorMessage}`);
-          }
-        } catch (error) {
-          console.error(error);
-          showPopup("Error: Failed to close voting");
-        }
-      });
-    }
-
-    const vote = `<%= JSON.stringify(vote) %>`;
-    `<% if (vote && vote.length) { %>`;
-    if (document.getElementById("vote-button")) {
-      document.getElementById("vote-button").disabled = true;
-    }
-    const voteCanId = "<%= vote[0].candidate_id%>";
-    const radioButtons = document.querySelectorAll(
-      'input[type="radio"][name="candidateId"]'
-    );
-
-    let found = false;
-    for (const radioButton of radioButtons) {
-      if (radioButton.value == voteCanId) {
-        radioButton.checked = true;
-        found = true;
-        break;
+      if (response.ok) {
+        showMessage("Voting closed successfully");
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      } else {
+        const errorMessage = await response.text();
+        showMessage(`Error: ${errorMessage}`);
       }
+    } catch (error) {
+      console.error(error);
+      showMessage("Error: Failed to close voting");
     }
+  });
+}
 
-    if (found) {
-      for (const radioButton of radioButtons) {
-        if (radioButton.value !== voteCanId) {
-          radioButton.disabled = true;
-        }
-      }
+const vote = `<%= JSON.stringify(vote) %>`;
+`<% if (vote && vote.length) { %>`;
+if (document.getElementById("vote-button")) {
+  document.getElementById("vote-button").disabled = true;
+}
+const voteCanId = "<%= vote[0].candidate_id%>";
+const radioButtons = document.querySelectorAll(
+  'input[type="radio"][name="candidateId"]'
+);
+
+let found = false;
+for (const radioButton of radioButtons) {
+  if (radioButton.value == voteCanId) {
+    radioButton.checked = true;
+    found = true;
+    break;
+  }
+}
+
+if (found) {
+  for (const radioButton of radioButtons) {
+    if (radioButton.value !== voteCanId) {
+      radioButton.disabled = true;
     }
-    `<% } %>`;
+  }
+}
+`<% } %>`;
+
+`<% if (voting.status == "closed") { %>`;
+const radioButtons2 = document.querySelectorAll(
+  'input[type="radio"][name="candidateId"]'
+);
+for (const radioButton of radioButtons2) {
+  radioButton.disabled = true;
+}
+`<% } %>`;
+
   </script>
 </body>
 

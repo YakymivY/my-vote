@@ -28,7 +28,7 @@ exports.login = async (req, res, next) => {
       !user[0][0] ||
       !(await User.comparePassword(password, user[0][0].password))
     ) {
-      return res.status(401).send("Authentication failed");
+      return res.status(401).send("Invalid login or password");
     }
 
     const token = uuidv4();
@@ -59,7 +59,7 @@ exports.login = async (req, res, next) => {
 };
 
 exports.logout = async (req, res, next) => {
-  if (!req.cookies.userId) {
+  if (!req.cookies.userId || !req.cookies.token) {
     res.status(500).send("Log out failed");
     return;
   }

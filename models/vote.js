@@ -24,11 +24,18 @@ class Vote {
   }
 
   static async retractVote(votingId, userId) {
+    const { Voting, Candidate } = require("../models/voting");
     return new Promise(async (resolve, reject) => {
       let connection;
       try {
         connection = await db.getConnection();
         await connection.beginTransaction();
+
+        const voting = Voting.fetchById(votingId);
+        if(!voting || voting.status=="closed"){
+          reject(new Error("Voting not found or closed"));
+          return;
+        }
 
         const [existingVoteRows] = await Vote.fetchByVotingIdAndUserId(
           votingId,
