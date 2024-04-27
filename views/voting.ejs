@@ -23,7 +23,7 @@
             <%= voting.title %>
           </h2>
           <div class="voting_info_container">
-            <p class="voting_creator">Author: <%= creatorName %>
+            <p class="voting_creator">Author: <%= voting.creator.name %>
             </p>
             <p class="voting_creator">Total votes: <%= voting.votesNum %>
             </p>
@@ -40,7 +40,7 @@
                   <input type="radio" name="candidateId" id="answer<%= index + 1 %>" value="<%= candidate.id %>" />
                   <label for="answer<%= index + 1 %>">
                     <%= candidate.name %>
-                      <% if (voting.status=='closed' || (vote && vote.length)) { %> - <%= candidate.votesNum %> votes <% } %>
+                      <% if (voting.status=='closed' || (vote)) { %> - <%= candidate.votesNum %> votes <% } %>
                   </label>
                 </p>
                 <% }) %>
@@ -48,7 +48,7 @@
             <div class="vote_button_container">
               <% if (voting.status=='active' ) { %>
                 <button type="submit" class="green_button" id="vote-button">
-                  <% if (vote && vote.length) { %> You already voted <% } else { %> Vote <% } %>
+                  <% if (vote) { %> You already voted <% } else { %> Vote <% } %>
                 </button>
                 <% } %>
             </div>
@@ -213,11 +213,11 @@
     }
 
     const vote = `<%= JSON.stringify(vote) %>`;
-    `<% if (vote && vote.length) { %>`;
+    `<% if (vote) { %>`;
     if (document.getElementById("vote-button")) {
       document.getElementById("vote-button").disabled = true;
     }
-    const voteCanId = "<%= vote[0].candidate_id%>";
+    const voteCanId = "<%= vote.candidateId%>";
     const radioButtons = document.querySelectorAll(
       'input[type="radio"][name="candidateId"]'
     );

@@ -33,4 +33,13 @@ User.createUser = async (name, login, password) => {
   return user;
 };
 
+User.fetchByLogin = async (login) => {
+  const user = await User.findOne({ where: { login } });
+  return user;
+};
+
+User.comparePassword = (password, storedPassword) => {
+  return bcrypt.compare(password, storedPassword);
+};
+
 module.exports = User;

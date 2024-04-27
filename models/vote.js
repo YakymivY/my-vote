@@ -16,4 +16,10 @@ const Vote = sequelize.define("Vote", {
   },
 });
 
+Vote.hasUserVoted = async (votingId, userId) => {
+  return await Vote.findOne({
+    where: { votingId, userId }
+  });
+};
+
 module.exports = Vote;
