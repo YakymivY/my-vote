@@ -5,24 +5,20 @@ const Session = require("../models/session");
 const verifySession = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
-    console.log("Error: empty token");
-    return res.status(401).send("Unauthorized");
+    return res.status(401).send("Error: empty token. Please log in.");
   }
   let session = await Session.fetchByToken(token);
   session = session[0][0];
   if (!session || session.expires_at < Date.now()) {
-    console.log("Error: expired session");
-    return res.status(401).send("Unauthorized");
+    res.cookie("token", "", {
+      expires: new Date(0),
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    return res.status(401).send("Error: expired session. Please log in again.");
   }
-
-  if (req.cookies.userId != session.user_id) {
-    console.log(req.cookies.userId);
-    console.log(session.user_id);
-    console.log("Error: userId in cookies does not match with session user id");
-    return res.status(401).send("Unauthorized");
-  }
-
-  req.user_id = session.user_id;
+  req.userId = session.user_id;
   next();
 };
 

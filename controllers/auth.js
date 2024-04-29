@@ -37,14 +37,6 @@ exports.login = async (req, res, next) => {
       .slice(0, 19)
       .replace("T", " ");
     await Session.create(user[0][0].id, token, expires_at);
-
-    res.cookie("userId", user[0][0].id, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -59,17 +51,15 @@ exports.login = async (req, res, next) => {
 };
 
 exports.logout = async (req, res, next) => {
-  if (!req.cookies.userId || !req.cookies.token) {
+  const token = req.cookies.token
+  if (!token) {
     res.status(500).send("Log out failed");
     return;
   }
-  await Session.deleteByUser(req.cookies.userId);
-  res.cookie("userId", "", {
-    expires: new Date(0),
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  });
+  let session = await Session.fetchByToken(token);
+  session = session[0][0];
+  const userId = session.user_id
+  await Session.deleteByUser(userId);
   res.cookie("token", "", {
     expires: new Date(0),
     httpOnly: true,
@@ -80,11 +70,11 @@ exports.logout = async (req, res, next) => {
 };
 
 exports.getLogin = async (req, res, next) => {
-  const userId = req.cookies.userId ? req.cookies.userId : null;
+  const userId = req.cookies.token ? req.cookies.token : null;
   res.render("auth/login", { req, userId });
 };
 
 exports.getRegister = async (req, res, next) => {
-  const userId = req.cookies.userId ? req.cookies.userId : null;
+  const userId = req.cookies.token ? req.cookies.token : null;
   res.render("auth/register", { req, userId });
 };

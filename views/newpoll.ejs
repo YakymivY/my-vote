@@ -57,6 +57,10 @@
         </div>
       </section>
     </div>
+    <div class="alert hide" id="alert">
+      <p class="alert_message" id="alert_msg"></p>
+    </div>
+    <script src="/scripts/main.js"></script>
     <script>
 
       function addOption() {
@@ -74,6 +78,36 @@
       function removeOption(btn) {
         btn.parentNode.parentNode.remove();
       }
+
+      document.getElementById("surveyForm").addEventListener("submit", handleFormSubmission);
+
+  async function handleFormSubmission(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    try {
+      const response = await fetch("/newpoll/add-voting", {
+        method: "POST",
+        body: formData,
+      });
+      if (response.ok) {
+        const result = await response.json();
+      }else if (response.status === 401) {
+        showMessage("Not authorized. Please log in")
+        setTimeout(() => {
+        window.location.href="/auth/login"
+      }, 2000);
+      }
+       else {
+        const errorMessage = await response.text();
+        showMessage(errorMessage);
+        return;
+      }
+    } catch (error) {
+      showMessage(`Error: ${error}`);
+    }
+  }
     </script>
   </body>
 </html>

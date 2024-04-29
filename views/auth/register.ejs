@@ -49,6 +49,11 @@ try {
   if (!response.ok) {
     const message = await response.text();
     throw new Error(message || 'Something went wrong');
+  }else{
+    showMessage("User successfully registered!")
+    setTimeout(() => {
+      window.location.href = '/auth/login';
+      }, 1000);
   }
 } catch (error) {
   showMessage(error.message);
