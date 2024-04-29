@@ -28,7 +28,7 @@ exports.getVoting = async (req, res, next) => {
         voting,
         candidates,
         vote: voteRows,
-        userId:token,
+        userId:userId,
         creatorName,
         req,
       });
@@ -40,6 +40,7 @@ exports.getVoting = async (req, res, next) => {
 };
 
 exports.addVoting = async (req, res, next) => {
+  console.log(req.body)
   try {
     const votingId = await Voting.createWithCandidates(
       req.body.surveyTitle,

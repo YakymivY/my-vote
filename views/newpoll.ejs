@@ -83,16 +83,33 @@
 
   async function handleFormSubmission(event) {
     event.preventDefault();
-
     const form = event.target;
     const formData = new FormData(form);
+
+    const formObject = {};
+    for (let pair of formData.entries()) {
+    if (pair[0] === "options") {
+      if (!formObject[pair[0]]) {
+        formObject[pair[0]] = [];
+      }
+      formObject[pair[0]].push(pair[1]);
+    } else {
+      formObject[pair[0]] = pair[1];
+    }
+    console.log(formObject)
+    }
     try {
       const response = await fetch("/newpoll/add-voting", {
-        method: "POST",
-        body: formData,
-      });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formObject),
+    });
+
       if (response.ok) {
-        const result = await response.json();
+        console.log(response)
+        window.location.href = response.url;
       }else if (response.status === 401) {
         showMessage("Not authorized. Please log in")
         setTimeout(() => {
@@ -106,6 +123,7 @@
       }
     } catch (error) {
       showMessage(`Error: ${error}`);
+      console.log(error)
     }
   }
     </script>
