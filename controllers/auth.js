@@ -56,8 +56,19 @@ exports.logout = async (req, res, next) => {
     res.status(500).send("Log out failed");
     return;
   }
+  try{
   let session = await Session.fetchByToken(token);
   session = session[0][0];
+  if (!session) {
+    res.cookie("token", "", {
+      expires: new Date(0),
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    res.status(500).send("Log out failed. Token is damaged.");
+    return;
+  }
   const userId = session.user_id
   await Session.deleteByUser(userId);
   res.cookie("token", "", {
@@ -67,6 +78,10 @@ exports.logout = async (req, res, next) => {
     sameSite: "strict",
   });
   res.redirect(`/`);
+  }catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 exports.getLogin = async (req, res, next) => {

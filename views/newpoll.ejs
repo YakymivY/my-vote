@@ -57,10 +57,9 @@
         </div>
       </section>
     </div>
-    <div class="alert hide" id="alert">
-      <p class="alert_message" id="alert_msg"></p>
-    </div>
+    <%- include('./includes/custom_alert.ejs') %>
     <script src="/scripts/main.js"></script>
+    <script src="/scripts/logout.js"></script>
     <script>
 
       function addOption() {
@@ -79,7 +78,7 @@
         btn.parentNode.parentNode.remove();
       }
 
-      document.getElementById("surveyForm").addEventListener("submit", handleFormSubmission);
+  document.getElementById("surveyForm").addEventListener("submit", handleFormSubmission);
 
   async function handleFormSubmission(event) {
     event.preventDefault();
@@ -96,7 +95,6 @@
     } else {
       formObject[pair[0]] = pair[1];
     }
-    console.log(formObject)
     }
     try {
       const response = await fetch("/newpoll/add-voting", {

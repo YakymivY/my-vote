@@ -5,7 +5,7 @@
   <div class="header__right">
     <a href="/newpoll"><button class="green_button">Create vote</button></a>
     <% if (userId) { %>
-      <form action="/auth/logout" method="POST">
+      <form action="/auth/logout" method="POST" id="logoutForm">
         <button type="submit" class="transparent_button">Log out</button>
       </form>
       <% } else { %>
