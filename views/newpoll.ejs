@@ -57,6 +57,9 @@
         </div>
       </section>
     </div>
+    <%- include('./includes/custom_alert.ejs') %>
+    <script src="/scripts/main.js"></script>
+    <script src="/scripts/logout.js"></script>
     <script>
 
       function addOption() {
@@ -74,6 +77,53 @@
       function removeOption(btn) {
         btn.parentNode.parentNode.remove();
       }
+      
+  document.getElementById("surveyForm").addEventListener("submit", handleFormSubmission);
+
+  async function handleFormSubmission(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const formObject = {};
+    for (let pair of formData.entries()) {
+    if (pair[0] === "options") {
+      if (!formObject[pair[0]]) {
+        formObject[pair[0]] = [];
+      }
+      formObject[pair[0]].push(pair[1]);
+    } else {
+      formObject[pair[0]] = pair[1];
+    }
+    }
+    try {
+      const response = await fetch("/newpoll/add-voting", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formObject),
+    });
+
+      if (response.ok) {
+        console.log(response)
+        window.location.href = response.url;
+      }else if (response.status === 401) {
+        showMessage("Not authorized. Please log in")
+        setTimeout(() => {
+        window.location.href="/auth/login"
+      }, 2000);
+      }
+       else {
+        const errorMessage = await response.text();
+        showMessage(errorMessage);
+        return;
+      }
+    } catch (error) {
+      showMessage(`Error: ${error}`);
+      console.log(error)
+    }
+  }
     </script>
   </body>
 </html>

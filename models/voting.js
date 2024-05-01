@@ -55,6 +55,43 @@ const Candidate = sequelize.define("Candidate", {
   },
 });
 
+Voting.createWithCandidates = async (
+  title,
+  description,
+  createdById,
+  candidates
+) => {
+  try {
+    const transaction = await sequelize.transaction();
+    const voting = await this.create(
+      {
+        title: title,
+        description: description,
+        userId: createdById,
+      },
+      { transaction: transaction }
+    );
+    const candidatePromises = candidates.map((name) => {
+      return Candidate.create(
+        {
+          name: name,
+          votingId: voting.id,
+        },
+        { transaction: transaction }
+      );
+    });
+
+    await Promise.all(candidatePromises);
+
+    await transaction.commit();
+
+    return voting;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
 Voting.createWithCandidates = async function (
   title,
   description,

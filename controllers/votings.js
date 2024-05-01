@@ -1,12 +1,19 @@
 const { Voting, Candidate } = require("../models/voting");
 const Vote = require("../models/vote");
 const User = require("../models/user");
+const Session = require("../models/session");
 
 exports.getVoting = async (req, res, next) => {
   const votingId = req.params.id;
-  const userId = req.cookies.userId ? req.cookies.userId : null;
-
+  const token = req.cookies.token ? req.cookies.token : null
+  let userId = null;
   try {
+    if (token){
+      let session = await Session.fetchByToken(token);
+      if (session){
+        userId = session.userId;
+      }
+    }
     const voting = await Voting.findByPk(votingId, {
       include: [{ model: User, as: "creator" }],
     });
@@ -92,8 +99,7 @@ exports.openVoting = async (req, res, next) => {
 
 exports.getResult = async (req, res, next) => {
   const votingId = req.params.id;
-  const userId = req.cookies.userId ? req.cookies.userId : null;
-
+  const token = req.cookies.token ? req.cookies.token : null;
   try {
     const voting = await Voting.findByPk(votingId, {
       include: [{ model: User, as: "creator" }],
@@ -105,7 +111,7 @@ exports.getResult = async (req, res, next) => {
     res.render("votingRes", {
       voting,
       candidates,
-      userId,
+      userId:token,
       req,
     });
   } catch (err) {

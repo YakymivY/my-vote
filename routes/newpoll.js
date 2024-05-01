@@ -5,8 +5,8 @@ const auth = require("../middleware/auth");
 const votingsController = require("../controllers/votings");
 
 router.get("/", (req, res) => {
-  userId = req.cookies.userId;
-  res.render("newpoll", { req, userId });
+  const token = req.cookies.token ? req.cookies.token : null;
+  res.render("newpoll", { req, userId:token });
 });
 
 router.post("/add-voting", auth, votingsController.addVoting);

@@ -36,12 +36,11 @@
         </div>
       </section>
     </div>
-    <div class="alert hide" id="alert">
-      <p class="alert_message" id="alert_msg"></p>
-    </div>
+    <%- include('./includes/custom_alert.ejs') %>
   </body>
 
   <script src="/scripts/main.js"></script>
+  <script src="/scripts/logout.js"></script>
 
   <script>
     const copyLinkButton = document.getElementById("copyLinkButton");

@@ -34,14 +34,6 @@ exports.login = async (req, res, next) => {
       .slice(0, 19)
       .replace("T", " ");
     await Session.createSession(user.id, token, expiresAt);
-
-    res.cookie("userId", user.id, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 24 * 3600 * 1000,
-    });
-
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -56,18 +48,26 @@ exports.login = async (req, res, next) => {
 };
 
 exports.logout = async (req, res, next) => {
-  if (!req.userId) {
+  const token = req.cookies.token
+  if (!token) {
     res.status(500).send("Log out failed");
     return;
   }
   try {
-    await Session.deleteByUser(req.userId);
-    res.cookie("userId", "", {
-      expires: new Date(0),
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    });
+    let session = await Session.fetchByToken(token);
+    if (!session) {
+      res.cookie("token", "", {
+        expires: new Date(0),
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      res.status(500).send("Log out failed. Token is damaged.");
+      return;
+    }
+    
+    const userId = session.userId
+    await Session.deleteByUser(userId);
     res.cookie("token", "", {
       expires: new Date(0),
       httpOnly: true,
@@ -82,11 +82,11 @@ exports.logout = async (req, res, next) => {
 };
 
 exports.getLogin = async (req, res, next) => {
-  const userId = req.cookies.userId ? req.cookies.userId : null;
+  const userId = req.cookies.token ? req.cookies.token : null;
   res.render("auth/login", { req, userId });
 };
 
 exports.getRegister = async (req, res, next) => {
-  const userId = req.cookies.userId ? req.cookies.userId : null;
+  const userId = req.cookies.token ? req.cookies.token : null;
   res.render("auth/register", { req, userId });
 };
