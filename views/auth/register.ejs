@@ -31,30 +31,34 @@
     const form = document.querySelector('.auth_form');
 
 form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+e.preventDefault();
 
-  const name = document.querySelector('#name').value;
-  const login = document.querySelector('#login').value;
-  const password = document.querySelector('#password').value;
+const name = document.querySelector('#name').value;
+const login = document.querySelector('#login').value;
+const password = document.querySelector('#password').value;
 
-  try {
-    const response = await fetch('/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, login, password })
-    });
+try {
+  const response = await fetch('/auth/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name, login, password })
+  });
 
-    if (!response.ok) {
-      const message = await response.text();
-      throw new Error(message || 'Something went wrong');
-    }
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || 'Something went wrong');
+  }else{
+    showMessage("User successfully registered!")
+    setTimeout(() => {
+      window.location.href = '/auth/login';
+      }, 1000);
+  }
   } catch (error) {
     showMessage(error.message);
   }
-});
-
+  });
   </script>
 </body>
 </html>
