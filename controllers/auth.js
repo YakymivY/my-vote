@@ -9,13 +9,13 @@ exports.register = async (req, res, next) => {
   try {
     const existingUser = await User.fetchByLogin(login);
     if (existingUser) {
-      return res.status(409).send("User with that login already exists");
+      return res.status(409).json({message:"User with that login already exists"});
     }
     await User.createUser(name, login, password);
-    res.redirect(`/auth/login`);
+    res.json({redirect:`/auth/login`});
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({message:"Internal Server Error"});
   }
 };
 
@@ -25,7 +25,7 @@ exports.login = async (req, res, next) => {
   try {
     const user = await User.fetchByLogin(login);
     if (!user || !User.comparePassword(password, user.password)) {
-      return res.status(401).send("Invalid login or password");
+      return res.status(401).json({message:"Invalid login or password"});
     }
 
     const token = uuidv4();
@@ -40,17 +40,17 @@ exports.login = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 24 * 3600 * 1000,
     });
-    res.redirect(`/`);
+    res.json({redirect:`/`});
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({message:"Internal Server Error"});
   }
 };
 
 exports.logout = async (req, res, next) => {
   const token = req.cookies.token
   if (!token) {
-    res.status(500).send("Log out failed");
+    res.status(500).json({message:"Log out failed"});
     return;
   }
   try {
@@ -62,7 +62,7 @@ exports.logout = async (req, res, next) => {
         secure: true,
         sameSite: "strict",
       });
-      res.status(500).send("Log out failed. Token is damaged.");
+      res.status(500).json("Log out failed. Token is damaged.");
       return;
     }
     
@@ -74,19 +74,19 @@ exports.logout = async (req, res, next) => {
       secure: true,
       sameSite: "strict",
     });
-    res.redirect(`/`);
+    res.json({redirect:`/`});
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({message:"Internal Server Error"});
   }
 };
 
 exports.getLogin = async (req, res, next) => {
   const userId = req.cookies.token ? req.cookies.token : null;
-  res.render("auth/login", { req, userId });
+  res.json({ req, userId });
 };
 
 exports.getRegister = async (req, res, next) => {
   const userId = req.cookies.token ? req.cookies.token : null;
-  res.render("auth/register", { req, userId });
+  res.json({ req, userId });
 };
