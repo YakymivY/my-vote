@@ -8,7 +8,7 @@ exports.getVotings = (req, res, next) => {
   })
     .then((votings) => {
       const userId = req.cookies.token ? req.cookies.token : null;
-      res.json({ votings, userId, req });
+      res.status(200).json({ votings, userId});
     })
     .catch((err) => {
       console.log(err);

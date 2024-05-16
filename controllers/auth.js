@@ -12,7 +12,7 @@ exports.register = async (req, res, next) => {
       return res.status(409).json({message:"User with that login already exists"});
     }
     await User.createUser(name, login, password);
-    res.json({redirect:`/auth/login`});
+    res.status(200).json({redirect:`/auth/login`});
   } catch (error) {
     console.error(error);
     res.status(500).json({message:"Internal Server Error"});
@@ -40,7 +40,7 @@ exports.login = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 24 * 3600 * 1000,
     });
-    res.json({redirect:`/`});
+    res.status(200).json({redirect:`/`});
   } catch (error) {
     console.error(error);
     res.status(500).json({message:"Internal Server Error"});
@@ -62,7 +62,7 @@ exports.logout = async (req, res, next) => {
         secure: true,
         sameSite: "strict",
       });
-      res.status(500).json("Log out failed. Token is damaged.");
+      res.status(500).json({message:"Log out failed. Token is damaged."});
       return;
     }
     
@@ -74,7 +74,7 @@ exports.logout = async (req, res, next) => {
       secure: true,
       sameSite: "strict",
     });
-    res.json({redirect:`/`});
+    res.status(200).json({redirect:`/`});
   } catch (error) {
     console.error(error);
     res.status(500).json({message:"Internal Server Error"});
@@ -83,10 +83,10 @@ exports.logout = async (req, res, next) => {
 
 exports.getLogin = async (req, res, next) => {
   const userId = req.cookies.token ? req.cookies.token : null;
-  res.json({ req, userId });
+  res.status(200).json({ userId });
 };
 
 exports.getRegister = async (req, res, next) => {
   const userId = req.cookies.token ? req.cookies.token : null;
-  res.json({ req, userId });
+  res.status(200).json({ userId });
 };

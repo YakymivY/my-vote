@@ -28,12 +28,11 @@ exports.getVoting = async (req, res, next) => {
       });
     }
     vote = vote ? vote.dataValues : undefined;
-    res.json({
+    res.status(200).json({
       voting,
       candidates,
       vote,
       userId,
-      req,
     });
   } catch (err) {
     console.error(err);
@@ -53,7 +52,7 @@ exports.addVoting = async (req, res, next) => {
       userId,
       options
     );
-    res.json({redirect:`/voting/${result.dataValues.id}`});
+    res.status(200).json({redirect:`/voting/${result.dataValues.id}`});
   } catch (error) {
     console.error(error);
     res.status(500).json({message:"Error saving voting"});
@@ -108,11 +107,10 @@ exports.getResult = async (req, res, next) => {
       return res.status(404).json({message:"Voting not found"});
     }
     const candidates = await Candidate.findAll({ where: { votingId } });
-    res.json({
+    res.status(200).json({
       voting,
       candidates,
       userId:token,
-      req,
     });
   } catch (err) {
     console.error(err);
@@ -137,7 +135,7 @@ exports.deleteVoting = async (req, res, next) => {
   const userId = req.userId;
   try {
     await Voting.deleteVoting(votingId, userId);
-    res.json({redirect:`/`});
+    res.status(200).json({redirect:`/`});
   } catch (error) {
     console.error(error);
     res.status(500).json({message:"An error occurred while deleting the voting"});

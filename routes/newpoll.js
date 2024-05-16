@@ -6,7 +6,7 @@ const votingsController = require("../controllers/votings");
 
 router.get("/", (req, res) => {
   const token = req.cookies.token ? req.cookies.token : null;
-  res.render("newpoll", { req, userId:token });
+  res.status(200).json({userId:token });
 });
 
 router.post("/add-voting", auth, votingsController.addVoting);
