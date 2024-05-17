@@ -13,6 +13,7 @@ const authRoutes = require("./routes/auth");
 const errorController = require("./controllers/error");
 require("./models/associations");
 
+const cors = require('cors');
 sequelize
   .sync()
   .then((result) => {
@@ -25,6 +26,7 @@ sequelize
   });
 
 app.use(cookieParser());
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
