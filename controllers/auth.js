@@ -24,7 +24,8 @@ exports.login = async (req, res, next) => {
   const password = req.body.password;
   try {
     const user = await User.fetchByLogin(login);
-    if (!user || !User.comparePassword(password, user.password)) {
+    const checkPass = await User.comparePassword(password, user.password);
+    if (!user || !checkPass) {
       return res.status(401).json({message:"Invalid login or password"});
     }
 
@@ -40,7 +41,11 @@ exports.login = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 24 * 3600 * 1000,
     });
-    res.status(200).json({redirect:`/`});
+    res.status(200).json(
+    {
+      redirect:`/`,
+      token: token,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({message:"Internal Server Error"});

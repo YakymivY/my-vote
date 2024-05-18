@@ -26,7 +26,11 @@ sequelize
   });
 
 app.use(cookieParser());
-app.use(cors())
+const corsOptions = {
+  origin: 'http://localhost:4200',
+  credentials: true
+}
+app.use(cors(corsOptions))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
