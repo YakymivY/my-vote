@@ -24,7 +24,7 @@ exports.login = async (req, res, next) => {
   const password = req.body.password;
   try {
     const user = await User.fetchByLogin(login);
-    if (!user || !User.comparePassword(password, user.password)) {
+    if (!user || ! await User.comparePassword(password, user.password)) {
       return res.status(401).send("Invalid login or password");
     }
 
