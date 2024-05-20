@@ -1,6 +1,9 @@
 const ErrorController = {
   notFound: (req, res) => {
-    const userId = req.cookies.token ? req.cookies.token : null;
+    const tokenString = req.headers["authorization"]
+      ? req.headers["authorization"]
+      : null;
+    const token = tokenString && tokenString.split(" ")[1];
     res.status(404).json({ userId });
   },
 };
