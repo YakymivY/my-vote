@@ -8,13 +8,13 @@ router.get("/:id", votingsController.getVoting);
 
 router.post("/:id/vote", auth, votingsController.castVote);
 
-router.post("/:id/close", auth, votingsController.closeVoting);
+router.put("/:id/close", auth, votingsController.closeVoting);
 
-router.post("/:id/open", auth, votingsController.openVoting);
+router.put("/:id/open", auth, votingsController.openVoting);
 
 router.post("/:id/retract", auth, votingsController.retractVote);
 
-router.post("/:id/delete", auth, votingsController.deleteVoting)
+router.delete("/:id", auth, votingsController.deleteVoting);
 
 router.get("/:id/res", votingsController.getResult);
 

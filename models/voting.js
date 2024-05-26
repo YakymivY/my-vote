@@ -18,7 +18,7 @@ const Voting = sequelize.define("Voting", {
     allowNull: true,
   },
   status: {
-    type: Sequelize.ENUM("active", "closed", "completed"),
+    type: Sequelize.ENUM("active", "closed"),
     defaultValue: "active",
   },
   userId: {
